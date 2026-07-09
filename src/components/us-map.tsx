@@ -1,30 +1,26 @@
 import { useMemo } from "react";
 import { geoAlbersUsa, geoPath, geoAlbers } from "d3-geo";
-import { feature, mesh } from "topojson-client";
-import type { FeatureCollection, Geometry, GeoJsonProperties, MultiLineString } from "geojson";
-import type { Topology, GeometryCollection } from "topojson-specification";
+import { feature } from "topojson-client";
+import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 import statesTopoRaw from "us-atlas/states-10m.json";
 import countiesTopoRaw from "us-atlas/counties-10m.json";
 import { STATE_BY_FIPS, stateCodeFromFips, stateFipsFromCode } from "@/lib/us-geo";
 import { useHeatLevel, type StateAgg, type CountyAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
 
-const statesTopo = statesTopoRaw as unknown as Topology<{
-  states: GeometryCollection<{ name: string }>;
-}>;
-const countiesTopo = countiesTopoRaw as unknown as Topology<{
-  counties: GeometryCollection<{ name: string }>;
-  states: GeometryCollection<{ name: string }>;
-}>;
+// us-atlas ships TopoJSON; feature() only needs .objects[key], not full typing.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const statesTopo = statesTopoRaw as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const countiesTopo = countiesTopoRaw as any;
 
-type StateFeature = FeatureCollection<Geometry, { name: string }>["features"][number];
-type CountyFeature = FeatureCollection<Geometry, { name: string }>["features"][number];
+type Feat = FeatureCollection<Geometry, { name: string }>["features"][number];
 
-const stateFeatures: StateFeature[] = (
+const stateFeatures: Feat[] = (
   feature(statesTopo, statesTopo.objects.states) as FeatureCollection<Geometry, { name: string }>
 ).features;
 
-const countyFeaturesByState = new Map<string, CountyFeature[]>();
+const countyFeaturesByState = new Map<string, Feat[]>();
 {
   const all = feature(
     countiesTopo,
@@ -38,12 +34,6 @@ const countyFeaturesByState = new Map<string, CountyFeature[]>();
     countyFeaturesByState.set(stateFips, list);
   }
 }
-
-const stateBoundaries = mesh(
-  countiesTopo,
-  countiesTopo.objects.states,
-  (a, b) => a !== b,
-) as MultiLineString;
 
 const usaProjection = geoAlbersUsa().scale(1200).translate([487.5, 305]);
 const usaPath = geoPath(usaProjection);
