@@ -44,7 +44,7 @@ function Index() {
     patch: Partial<{ sports: Sport[]; state: string | null; county: string | null }>,
   ) => {
     navigate({
-      search: (prev) => {
+      search: ((prev: Record<string, unknown>) => {
         const next: Record<string, unknown> = { ...prev };
         if ("sports" in patch) next.sports = patch.sports;
         if ("state" in patch) {
@@ -57,7 +57,7 @@ function Index() {
           else delete next.county;
         }
         return next;
-      },
+      }) as never,
       replace: true,
     });
   };
