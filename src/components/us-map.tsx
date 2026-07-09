@@ -17,7 +17,10 @@ const countiesTopo = countiesTopoRaw as any;
 type Feat = FeatureCollection<Geometry, { name: string }>["features"][number];
 
 const stateFeatures: Feat[] = (
-  feature(statesTopo, statesTopo.objects.states) as FeatureCollection<Geometry, { name: string }>
+  feature(statesTopo, statesTopo.objects.states) as unknown as FeatureCollection<
+    Geometry,
+    { name: string }
+  >
 ).features;
 
 const countyFeaturesByState = new Map<string, Feat[]>();
@@ -25,7 +28,7 @@ const countyFeaturesByState = new Map<string, Feat[]>();
   const all = feature(
     countiesTopo,
     countiesTopo.objects.counties,
-  ) as FeatureCollection<Geometry, { name: string }>;
+  ) as unknown as FeatureCollection<Geometry, { name: string }>;
   for (const f of all.features) {
     const fips = String(f.id).padStart(5, "0");
     const stateFips = fips.slice(0, 2);
