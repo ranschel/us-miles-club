@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      workouts: {
+        Row: {
+          city: string
+          county_fips: string
+          county_name: string
+          created_at: string
+          distance_miles: number
+          id: string
+          performed_at: string
+          sport: Database["public"]["Enums"]["sport_type"]
+          state_code: string
+          user_id: string | null
+        }
+        Insert: {
+          city: string
+          county_fips: string
+          county_name: string
+          created_at?: string
+          distance_miles: number
+          id?: string
+          performed_at: string
+          sport: Database["public"]["Enums"]["sport_type"]
+          state_code: string
+          user_id?: string | null
+        }
+        Update: {
+          city?: string
+          county_fips?: string
+          county_name?: string
+          created_at?: string
+          distance_miles?: number
+          id?: string
+          performed_at?: string
+          sport?: Database["public"]["Enums"]["sport_type"]
+          state_code?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +61,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      sport_type: "walk" | "run" | "bike"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +188,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      sport_type: ["walk", "run", "bike"],
+    },
   },
 } as const
