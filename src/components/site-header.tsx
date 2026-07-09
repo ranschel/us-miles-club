@@ -22,17 +22,22 @@ function useSession() {
 }
 
 function useTheme() {
-  const [dark, setDark] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const [dark, setDark] = useState<boolean>(false);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const initial = saved
+      ? saved === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setDark(initial);
+    setReady(true);
+  }, []);
+  useEffect(() => {
+    if (!ready) return;
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark]);
-  return { dark, toggle: () => setDark((d) => !d) };
+  }, [dark, ready]);
+  return { dark, ready, toggle: () => setDark((d) => !d) };
 }
 
 export function SiteHeader() {
