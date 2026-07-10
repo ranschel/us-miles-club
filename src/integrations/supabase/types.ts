@@ -18,18 +18,24 @@ export type Database = {
         Row: {
           created_at: string
           full_name: string
+          recovery_code_hash: string | null
+          recovery_code_set_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
           full_name?: string
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
           full_name?: string
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
           updated_at?: string
           user_id?: string
         }

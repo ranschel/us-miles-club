@@ -1,8 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { createHash, randomBytes } from "crypto";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { aggregate, aggregateCities, aggregateIndividuals, mostMilesBy } from "@/lib/aggregate";
 import type { WorkoutRow } from "@/lib/public-workouts";
+
+const RECOVERY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function generateRecoveryCode(): string {
+  const bytes = randomBytes(16);
+  let out = "";
+  for (let i = 0; i < 16; i++) {
+    out += RECOVERY_ALPHABET[bytes[i] % RECOVERY_ALPHABET.length];
+    if (i % 4 === 3 && i !== 15) out += "-";
+  }
+  return out;
+}
+
+function normalizeRecoveryCode(raw: string): string {
+  return raw.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+}
+
+function hashRecoveryCode(raw: string): string {
+  return createHash("sha256").update(normalizeRecoveryCode(raw)).digest("hex");
+}
+
 
 const WorkoutFields = z.object({
   sport: z.enum(["walk", "run", "bike"]),
@@ -215,4 +237,123 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       );
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+/**
+ * Generates and stores a hashed one-time recovery code the very first time
+ * this is called for a user. Returns the plaintext code ONCE; subsequent
+ * calls return `{ code: null }`.
+ */
+export const ensureRecoveryCode = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: existing, error: readErr } = await context.supabase
+      .from("profiles")
+      .select("recovery_code_hash")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    if (existing?.recovery_code_hash) return { code: null as string | null };
+
+    const code = generateRecoveryCode();
+    const hash = hashRecoveryCode(code);
+    const { error } = await context.supabase
+      .from("profiles")
+      .upsert(
+        {
+          user_id: context.userId,
+          recovery_code_hash: hash,
+          recovery_code_set_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" },
+      );
+    if (error) throw new Error(error.message);
+    return { code };
+  });
+
+const RedeemInput = z.object({
+  email: z.string().trim().email().max(255),
+  code: z.string().trim().min(10).max(40),
+  newEmail: z.string().trim().email().max(255),
+});
+
+/**
+ * Public endpoint. Verifies a recovery code for the given email and, on
+ * success, replaces the auth account's email with `newEmail`. The recovery
+ * code is single-use and cleared after redemption.
+ */
+export const redeemRecoveryCode = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => RedeemInput.parse(data))
+  .handler(async ({ data }) => {
+    const email = data.email.trim().toLowerCase();
+    const newEmail = data.newEmail.trim().toLowerCase();
+    if (email === newEmail) {
+      throw new Error("New email must be different from your current email.");
+    }
+    const codeHash = hashRecoveryCode(data.code);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseUrl = process.env.SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+    // Look up the auth user by email via the admin REST endpoint.
+    const lookup = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users?email=${encodeURIComponent(email)}`,
+      {
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+        },
+      },
+    );
+    // Generic error on any failure — don't reveal which field was wrong.
+    const genericError = "Recovery failed. Check the email and code and try again.";
+    if (!lookup.ok) throw new Error(genericError);
+    const body = (await lookup.json()) as {
+      users?: Array<{ id: string; email?: string | null }>;
+    };
+    const user = body.users?.find((u) => (u.email ?? "").toLowerCase() === email);
+    if (!user) throw new Error(genericError);
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("recovery_code_hash")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!profile?.recovery_code_hash || profile.recovery_code_hash !== codeHash) {
+      throw new Error(genericError);
+    }
+
+    // Make sure the new address isn't already in use by another account.
+    const existingCheck = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users?email=${encodeURIComponent(newEmail)}`,
+      {
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+        },
+      },
+    );
+    if (existingCheck.ok) {
+      const existingBody = (await existingCheck.json()) as {
+        users?: Array<{ id: string; email?: string | null }>;
+      };
+      const conflict = existingBody.users?.find(
+        (u) => (u.email ?? "").toLowerCase() === newEmail,
+      );
+      if (conflict) throw new Error("That email is already tied to another account.");
+    }
+
+    const { error: updErr } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
+      email: newEmail,
+      email_confirm: true,
+    });
+    if (updErr) throw new Error(updErr.message);
+
+    await supabaseAdmin
+      .from("profiles")
+      .update({ recovery_code_hash: null, recovery_code_set_at: null })
+      .eq("user_id", user.id);
+
+    return { ok: true, newEmail };
   });

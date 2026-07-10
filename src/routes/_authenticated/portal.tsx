@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save } from "lucide-react";
+import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save, ShieldCheck, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SportFilter } from "@/components/sport-filter";
@@ -22,6 +22,7 @@ import {
   getMyProfile,
   updateMyProfile,
   getMyRankings,
+  ensureRecoveryCode,
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
@@ -45,9 +46,28 @@ function Portal() {
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
   const getRankings = useServerFn(getMyRankings);
+  const ensureCode = useServerFn(ensureRecoveryCode);
   const [sportFilter, setSportFilter] = useState<Sport[]>(["walk", "run", "bike"]);
 
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [confirmedSaved, setConfirmedSaved] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    ensureCode()
+      .then((res) => {
+        if (!cancelled && res?.code) setRecoveryCode(res.code);
+      })
+      .catch(() => {
+        /* non-blocking */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ensureCode]);
+
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
@@ -401,6 +421,86 @@ function Portal() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog
+        open={!!recoveryCode}
+        onOpenChange={(open) => {
+          // Block dismiss until the user confirms they saved it.
+          if (!open && !confirmedSaved) return;
+          if (!open) {
+            setRecoveryCode(null);
+            setConfirmedSaved(false);
+            setCopied(false);
+          }
+        }}
+      >
+        <AlertDialogContent onEscapeKeyDown={(e) => e.preventDefault()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="text-primary" size={22} />
+              Save your recovery code
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-left">
+                <p>
+                  Write this code down or save it in a password manager. If you ever
+                  lose access to your email, this is the <strong>only</strong> way to
+                  recover your account.
+                </p>
+                <div className="rounded-lg border border-border bg-muted p-4 text-center">
+                  <div className="mono text-2xl font-bold tracking-widest break-all">
+                    {recoveryCode}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-ghost w-full"
+                  onClick={async () => {
+                    if (!recoveryCode) return;
+                    try {
+                      await navigator.clipboard.writeText(recoveryCode);
+                      setCopied(true);
+                      toast.success("Copied to clipboard.");
+                      setTimeout(() => setCopied(false), 2000);
+                    } catch {
+                      toast.error("Couldn't copy. Select and copy the code manually.");
+                    }
+                  }}
+                >
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+                  {copied ? "Copied" : "Copy code"}
+                </button>
+                <p className="text-xs text-text-secondary">
+                  We only store a one-way hash of this code, so we can't show it to
+                  you again. Treat it like a password.
+                </p>
+                <label className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={confirmedSaved}
+                    onChange={(e) => setConfirmedSaved(e.target.checked)}
+                    className="mt-1"
+                  />
+                  <span>I've saved my recovery code somewhere safe.</span>
+                </label>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              disabled={!confirmedSaved}
+              onClick={() => {
+                setRecoveryCode(null);
+                setConfirmedSaved(false);
+                setCopied(false);
+              }}
+            >
+              Done
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+
   );
 }
