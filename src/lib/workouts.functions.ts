@@ -269,7 +269,7 @@ export const ensureRecoveryCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data: existing, error: readErr } = await context.supabase
-      .from("profiles")
+      .from("profile_recovery")
       .select("recovery_code_hash")
       .eq("user_id", context.userId)
       .maybeSingle();
@@ -279,7 +279,7 @@ export const ensureRecoveryCode = createServerFn({ method: "POST" })
     const code = generateRecoveryCode();
     const hash = hashRecoveryCode(code);
     const { error } = await context.supabase
-      .from("profiles")
+      .from("profile_recovery")
       .upsert(
         {
           user_id: context.userId,
