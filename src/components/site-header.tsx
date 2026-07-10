@@ -31,7 +31,7 @@ export function SiteHeader() {
 
 
   const linkCls = (active: boolean) =>
-    `inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold transition-all ${
+    `inline-flex items-center gap-2 h-10 px-3 sm:px-4 rounded-full text-sm font-semibold transition-all shrink-0 ${
       active
         ? "text-secondary bg-[rgba(94,234,255,0.10)] border border-[rgba(94,234,255,0.35)] shadow-[0_0_18px_rgba(94,234,255,0.25)]"
         : "text-text-secondary border border-transparent hover:text-foreground hover:bg-white/[0.04]"
@@ -42,15 +42,16 @@ export function SiteHeader() {
       <div className="flex w-full items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 lg:px-10">
         <Link
           to="/"
-          className="flex items-center gap-2.5 pr-3 font-display text-base font-bold tracking-tight"
+          className="flex shrink-0 items-center gap-2.5 pr-1 sm:pr-3 font-display text-base font-bold tracking-tight"
         >
           <img
             src={logoAsset.url}
             alt="US Miles Club"
-            className="h-9 w-9 rounded-lg object-cover"
+            className="h-9 w-9 shrink-0 rounded-lg object-cover"
           />
           <span className="hidden sm:inline">US Miles Club</span>
         </Link>
+
 
         <nav className="flex items-center gap-1" aria-label="Primary">
           <Link to="/" className={linkCls(path === "/")}>
@@ -67,28 +68,29 @@ export function SiteHeader() {
           </Link>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={toggle}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:text-foreground hover:border-border-strong hover:bg-white/[0.04]"
+            className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:text-foreground hover:border-border-strong hover:bg-white/[0.04]"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           {signedIn === false && (
-            <Link to="/auth" className="btn btn-cta">
+            <Link to="/auth" className="btn btn-cta text-sm px-4 sm:text-base sm:px-[1.15rem]">
               Join the Club
             </Link>
           )}
           {signedIn === true && (
-            <Link to="/log" className="btn btn-cta">
+            <Link to="/log" className="btn btn-cta text-sm px-4 sm:text-base sm:px-[1.15rem]">
               <Plus size={16} strokeWidth={2.5} />
               <span className="hidden sm:inline">Log workout</span>
             </Link>
           )}
         </div>
+
       </div>
     </header>
   );
