@@ -23,7 +23,6 @@ export const Route = createFileRoute("/auth")({
 function Auth() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -44,15 +43,6 @@ function Auth() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const name = fullName.trim().replace(/\s+/g, " ");
-    if (name.length < 2) {
-      setError("Enter your full name so neighbors can see who's climbing the board.");
-      return;
-    }
-    if (name.length > 80) {
-      setError("That name is a bit long — try 80 characters or fewer.");
-      return;
-    }
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setError("Enter a valid email address.");
       return;
@@ -63,7 +53,6 @@ function Auth() {
       options: {
         emailRedirectTo: `${window.location.origin}/portal`,
         shouldCreateUser: true,
-        data: { full_name: name },
       },
     });
     if (err) {
