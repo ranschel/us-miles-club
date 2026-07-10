@@ -355,11 +355,7 @@ function Portal() {
                 </Link>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (confirm(`Delete this ${sportLabel(w.sport).toLowerCase()}? This can't be undone.`)) {
-                      removeMut.mutate(w.id);
-                    }
-                  }}
+                  onClick={() => setPendingDeleteId(w.id)}
                   className="btn btn-ghost"
                   aria-label="Delete workout"
                   style={{ minWidth: 44 }}
@@ -371,6 +367,40 @@ function Portal() {
           </ul>
         )}
       </div>
+
+      <AlertDialog
+        open={!!pendingDeleteId}
+        onOpenChange={(open) => {
+          if (!open && !removeMut.isPending) setPendingDeleteId(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this workout?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDelete
+                ? `This ${sportLabel(pendingDelete.sport).toLowerCase()} of ${formatMiles(Number(pendingDelete.distance_miles))} will be removed from your history and the leaderboards. This can't be undone.`
+                : "This workout will be removed from your history and the leaderboards. This can't be undone."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={removeMut.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={removeMut.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!pendingDeleteId) return;
+                const id = pendingDeleteId;
+                removeMut.mutate(id, {
+                  onSettled: () => setPendingDeleteId(null),
+                });
+              }}
+            >
+              {removeMut.isPending ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
