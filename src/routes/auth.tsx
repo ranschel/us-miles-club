@@ -127,11 +127,15 @@ function Auth() {
         )}
 
         <p className="mt-6 text-xs text-text-secondary">
-          By continuing you agree to log honest miles. Head back to the{" "}
+          Lost access to your email?{" "}
+          <Link to="/recover" className="underline text-foreground">
+            Use your recovery code
+          </Link>
+          . Or head back to the{" "}
           <Link to="/" className="underline text-foreground">
             map
-          </Link>{" "}
-          anytime.
+          </Link>
+          .
         </p>
       </div>
     </div>

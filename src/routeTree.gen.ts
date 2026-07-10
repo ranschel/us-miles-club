@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -20,6 +21,11 @@ import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/lo
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecoverRoute = RecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardsRoute = LeaderboardsRouteImport.update({
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/recover': typeof RecoverRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/log': typeof AuthenticatedLogRoute
   '/portal': typeof AuthenticatedPortalRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/recover': typeof RecoverRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/log': typeof AuthenticatedLogRoute
   '/portal': typeof AuthenticatedPortalRoute
@@ -74,6 +82,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/recover': typeof RecoverRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
@@ -84,17 +93,26 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/leaderboards'
+    | '/recover'
     | '/sitemap.xml'
     | '/log'
     | '/portal'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/leaderboards' | '/sitemap.xml' | '/log' | '/portal'
+  to:
+    | '/'
+    | '/auth'
+    | '/leaderboards'
+    | '/recover'
+    | '/sitemap.xml'
+    | '/log'
+    | '/portal'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/leaderboards'
+    | '/recover'
     | '/sitemap.xml'
     | '/_authenticated/log'
     | '/_authenticated/portal'
@@ -105,6 +123,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   LeaderboardsRoute: typeof LeaderboardsRoute
+  RecoverRoute: typeof RecoverRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -115,6 +134,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recover': {
+      id: '/recover'
+      path: '/recover'
+      fullPath: '/recover'
+      preLoaderRoute: typeof RecoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboards': {
@@ -180,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   LeaderboardsRoute: LeaderboardsRoute,
+  RecoverRoute: RecoverRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
