@@ -208,8 +208,8 @@ function Index() {
               </div>
 
 
-              <div>
-                <div className="grid grid-cols-3 gap-6 max-w-lg">
+              <div className="mt-8 lg:mt-0">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-lg">
                   <Stat
                     label="Miles logged"
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
@@ -222,6 +222,7 @@ function Index() {
                   Updated in real time · miles + logs
                 </p>
               </div>
+
             </div>
 
 
