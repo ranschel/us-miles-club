@@ -209,10 +209,15 @@ function Portal() {
       </div>
 
       <div className="card mb-6">
-        <h2 className="text-xl font-bold">Your rankings</h2>
-        <p className="text-sm text-text-secondary">
-          Based on where you've logged the most miles.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold">Your rankings</h2>
+            <p className="text-sm text-text-secondary">
+              Based on where you've logged the most miles.
+            </p>
+          </div>
+          <SportFilter value={sportFilter} onChange={setSportFilter} />
+        </div>
         {rankings ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl bg-muted p-4">
