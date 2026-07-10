@@ -71,15 +71,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            onClick={toggle}
-            className="btn btn-ghost"
-            aria-label={light ? "Switch to dark theme" : "Switch to light theme"}
-            style={{ minHeight: 40, minWidth: 40, padding: "0 0.6rem", borderRadius: 999 }}
-          >
-            {light ? <Moon size={16} strokeWidth={2} /> : <Sun size={16} strokeWidth={2} />}
-          </button>
           {signedIn === false && (
             <Link to="/auth" className="btn btn-cta">
               Join the Club
