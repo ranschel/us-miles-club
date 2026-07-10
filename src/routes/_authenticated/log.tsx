@@ -11,7 +11,7 @@ import { Footprints, Bike, PersonStanding, ArrowLeft } from "lucide-react";
 
 import { createWorkout, updateWorkout, getWorkout } from "@/lib/workouts.functions";
 import { STATES, stateFipsFromCode } from "@/lib/us-geo";
-import { fromDateTimeLocal, kmFromMiles, toDateTimeLocal } from "@/lib/format";
+import { fromDateTimeLocal, milesFromKm, toDateTimeLocal } from "@/lib/format";
 
 const SearchSchema = z.object({ id: z.string().uuid().optional() });
 
