@@ -81,11 +81,13 @@ export function LeaderboardList({
   items,
   loading,
   emptyLabel = "Nothing here yet.",
+  onSelect,
 }: {
   title: string;
   items: { key: string; label: string; sub?: string; miles: number; count: number }[];
   loading?: boolean;
   emptyLabel?: string;
+  onSelect?: (key: string) => void;
 }) {
   return (
     <div className="glass-strong p-5">
@@ -105,32 +107,46 @@ export function LeaderboardList({
         <p className="text-sm text-text-secondary">{emptyLabel}</p>
       ) : (
         <ol className="space-y-1">
-          {items.map((it, i) => (
-            <li
-              key={it.key}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/[0.04] ${
-                i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"
-              }`}
-            >
-              <span className="mono w-8 text-xs font-semibold text-secondary">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="font-display font-semibold truncate">{it.label}</div>
-                {it.sub && (
-                  <div className="text-xs text-text-secondary truncate">{it.sub}</div>
+          {items.map((it, i) => {
+            const clickable = !!onSelect;
+            const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
+              clickable
+                ? "hover:bg-[rgba(94,234,255,0.08)] hover:ring-1 hover:ring-[rgba(94,234,255,0.35)] cursor-pointer"
+                : "hover:bg-white/[0.04]"
+            } ${i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
+            const content = (
+              <>
+                <span className="mono w-8 text-xs font-semibold text-secondary">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-display font-semibold truncate">{it.label}</div>
+                  {it.sub && (
+                    <div className="text-xs text-text-secondary truncate">{it.sub}</div>
+                  )}
+                </div>
+                <div className="text-right">
+                  <div className="mono text-sm font-semibold text-foreground">
+                    {formatMiles(it.miles)}
+                  </div>
+                  <div className="mono text-[0.65rem] text-text-secondary">
+                    {it.count} log{it.count === 1 ? "" : "s"}
+                  </div>
+                </div>
+              </>
+            );
+            return (
+              <li key={it.key}>
+                {clickable ? (
+                  <button type="button" className={rowCls} onClick={() => onSelect!(it.key)}>
+                    {content}
+                  </button>
+                ) : (
+                  <div className={rowCls}>{content}</div>
                 )}
-              </div>
-              <div className="text-right">
-                <div className="mono text-sm font-semibold text-foreground">
-                  {formatMiles(it.miles)}
-                </div>
-                <div className="mono text-[0.65rem] text-text-secondary">
-                  {it.count} log{it.count === 1 ? "" : "s"}
-                </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ol>
       )}
     </div>
