@@ -47,6 +47,8 @@ function Portal() {
   const getRankings = useServerFn(getMyRankings);
   const [sportFilter, setSportFilter] = useState<Sport[]>(["walk", "run", "bike"]);
 
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
     queryFn: () => list(),
@@ -61,6 +63,8 @@ function Portal() {
     queryKey: ["my-rankings", sportFilter],
     queryFn: () => getRankings({ data: { sports: sportFilter } }),
   });
+
+  const pendingDelete = pendingDeleteId ? data.find((w) => w.id === pendingDeleteId) : null;
 
   const [editingName, setEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
