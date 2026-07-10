@@ -40,7 +40,6 @@ function Leaderboards() {
 
   const topStates = [...byState.values()]
     .sort((a, b) => b.totalMiles - a.totalMiles)
-    .slice(0, 20)
     .map((s) => ({
       key: s.code,
       label: stateName(s.code),
@@ -50,7 +49,6 @@ function Leaderboards() {
 
   const topCounties = [...byCounty.values()]
     .sort((a, b) => b.totalMiles - a.totalMiles)
-    .slice(0, 20)
     .map((c) => ({
       key: c.fips,
       label: `${c.name} County`,
@@ -74,19 +72,15 @@ function Leaderboards() {
     existing.count += 1;
     cityMap.set(key, existing);
   }
-  const topCities = [...cityMap.values()]
-    .sort((a, b) => b.miles - a.miles)
-    .slice(0, 20);
+  const topCities = [...cityMap.values()].sort((a, b) => b.miles - a.miles);
 
   const topIndividuals = useMemo(() => {
-    return aggregateIndividuals(filtered)
-      .slice(0, 20)
-      .map((p) => ({
-        key: p.user_id ?? "__anon__",
-        label: p.full_name?.trim() || "Anonymous",
-        miles: p.totalMiles,
-        count: p.count,
-      }));
+    return aggregateIndividuals(filtered).map((p) => ({
+      key: p.user_id ?? "__anon__",
+      label: p.full_name?.trim() || "Anonymous",
+      miles: p.totalMiles,
+      count: p.count,
+    }));
   }, [filtered]);
 
   return (
@@ -102,11 +96,12 @@ function Leaderboards() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <LeaderboardList title="States" items={topStates} loading={isLoading} />
-        <LeaderboardList title="Counties" items={topCounties} loading={isLoading} />
-        <LeaderboardList title="Cities" items={topCities} loading={isLoading} />
-        <LeaderboardList title="Individuals" items={topIndividuals} loading={isLoading} />
+        <LeaderboardList title="States" items={topStates} loading={isLoading} searchable searchPlaceholder="Search states" />
+        <LeaderboardList title="Counties" items={topCounties} loading={isLoading} searchable searchPlaceholder="Search counties" />
+        <LeaderboardList title="Cities" items={topCities} loading={isLoading} searchable searchPlaceholder="Search cities" />
+        <LeaderboardList title="Individuals" items={topIndividuals} loading={isLoading} searchable searchPlaceholder="Search names" />
       </div>
     </div>
   );
 }
+
