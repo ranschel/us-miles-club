@@ -262,6 +262,7 @@ function Index() {
                   items={topCountiesInState}
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
+                  onSelect={(key) => setSearch({ county: key })}
                 />
 
                 {selectedCounty && (
