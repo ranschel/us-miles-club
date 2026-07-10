@@ -112,11 +112,7 @@ export function LeaderboardList({
                 i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"
               }`}
             >
-              <span
-                className={`mono w-8 text-xs font-semibold ${
-                  i < 3 ? "text-secondary" : "text-text-secondary"
-                }`}
-              >
+              <span className="mono w-8 text-xs font-semibold text-secondary">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
