@@ -150,9 +150,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div
-        className="flex min-h-screen flex-col bg-background text-foreground"
+        className="relative flex min-h-screen flex-col bg-background text-foreground"
         suppressHydrationWarning
       >
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${bgAsset.url})` }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-background/70"
+        />
         <SiteHeader />
         <main className="flex-1" suppressHydrationWarning>
           <Outlet />
