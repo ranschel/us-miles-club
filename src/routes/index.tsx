@@ -115,57 +115,45 @@ function Index() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
       {/* Hero */}
-      <section className="grid gap-8 md:grid-cols-[1.15fr_1fr] md:items-center">
-        <div className="order-1">
-          <p className="chip mb-4" style={{ background: "var(--color-muted)" }}>
-            <MapPin size={14} strokeWidth={2} />
-            United States · live leaderboard
-          </p>
-          <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
-            Every mile your neighborhood moves,{" "}
-            <span className="text-primary">on the map</span>.
-          </h1>
-          <p className="mt-4 text-lg text-text-secondary max-w-xl">
-            Log a walk, run, or ride and watch your county climb the national board. No trackers,
-            no feeds — just neighbors moving together.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/auth" className="btn btn-cta">
-              Join the Club
-            </Link>
-            <a href="#explore" className="btn btn-secondary">
-              Explore the map
-            </a>
+      <section className="max-w-3xl">
+        <p className="chip mb-4" style={{ background: "var(--color-muted)" }}>
+          <MapPin size={14} strokeWidth={2} />
+          United States · live leaderboard
+        </p>
+        <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
+          Every mile your neighborhood moves,{" "}
+          <span className="text-primary">on the map</span>.
+        </h1>
+        <p className="mt-4 text-lg text-text-secondary max-w-xl">
+          Log a walk, run, or ride and watch your county climb the national board. No trackers,
+          no feeds — just neighbors moving together.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link to="/auth" className="btn btn-cta">
+            Join the Club
+          </Link>
+          <a href="#explore" className="btn btn-secondary">
+            Explore the map
+          </a>
+        </div>
+        <dl className="mt-8 grid grid-cols-3 gap-4 max-w-md">
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-text-secondary">Miles logged</dt>
+            <dd className="mono text-2xl font-bold">
+              {isLoading ? "…" : formatMiles(totalMiles)}
+            </dd>
           </div>
-          <dl className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-text-secondary">Miles logged</dt>
-              <dd className="mono text-2xl font-bold">
-                {isLoading ? "…" : formatMiles(totalMiles)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-text-secondary">Active states</dt>
-              <dd className="mono text-2xl font-bold">{isLoading ? "…" : byState.size}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-text-secondary">Workouts</dt>
-              <dd className="mono text-2xl font-bold">{isLoading ? "…" : filtered.length}</dd>
-            </div>
-          </dl>
-        </div>
-        <div className="order-2 card p-3 md:p-4">
-          <NationalMap
-            byState={byState}
-            selected={stateCode}
-            onSelect={(code) => {
-              setSearch({ state: code, county: null });
-              const el = document.getElementById("explore");
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-          />
-        </div>
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-text-secondary">Active states</dt>
+            <dd className="mono text-2xl font-bold">{isLoading ? "…" : byState.size}</dd>
+          </div>
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-text-secondary">Workouts</dt>
+            <dd className="mono text-2xl font-bold">{isLoading ? "…" : filtered.length}</dd>
+          </div>
+        </dl>
       </section>
+
 
       {/* Explore section */}
       <section id="explore" className="mt-16 scroll-mt-20">
