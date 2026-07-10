@@ -166,10 +166,11 @@ function Index() {
       {/* Background flourish */}
       <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
-      <div className="relative w-full px-6 py-8 lg:px-10">
+      <div className="relative w-full px-4 py-6 sm:px-6 md:py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-10 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
+          <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
+
             {/* LEFT */}
             <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
               <div className="min-w-0">
