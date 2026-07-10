@@ -136,6 +136,18 @@
   --map-stroke-selected: rgba(0, 160, 180, 0.85);
 }
 
+.light .glass,
+.light .card {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(0, 0, 0, 0.10);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.light .glass-strong {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
