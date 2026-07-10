@@ -35,6 +35,7 @@ function Portal() {
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
   const getRankings = useServerFn(getMyRankings);
+  const [sportFilter, setSportFilter] = useState<Sport[]>(["walk", "run", "bike"]);
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
