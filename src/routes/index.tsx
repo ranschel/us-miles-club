@@ -207,6 +207,7 @@ function Index() {
                     items={topStates.slice(0, 5)}
                     loading={isLoading}
                     emptyLabel="No miles logged yet."
+                    onSelect={(key) => setSearch({ state: key })}
                   />
                 </div>
               </div>
@@ -261,6 +262,7 @@ function Index() {
                   items={topCountiesInState}
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
+                  onSelect={(key) => setSearch({ county: key })}
                 />
 
                 {selectedCounty && (

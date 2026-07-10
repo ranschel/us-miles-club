@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Map as MapIcon, Trophy, User, Plus, Sun, Moon } from "lucide-react";
+import { Map as MapIcon, Trophy, User, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 function useSession() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -21,26 +22,16 @@ function useSession() {
   return signedIn;
 }
 
-function useTheme() {
-  const [light, setLight] = useState<boolean>(false);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    setLight(saved === "light");
-    setReady(true);
-  }, []);
-  useEffect(() => {
-    if (!ready) return;
-    document.documentElement.classList.toggle("light", light);
-    localStorage.setItem("theme", light ? "light" : "dark");
-  }, [light, ready]);
-  return { light, ready, toggle: () => setLight((l) => !l) };
-}
 
 export function SiteHeader() {
   const signedIn = useSession();
-  const { light, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
+
+  // Force dark theme site-wide
+  useEffect(() => {
+    document.documentElement.classList.remove("light");
+    localStorage.removeItem("theme");
+  }, []);
 
   const linkCls = (active: boolean) =>
     `inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold transition-all ${
@@ -56,12 +47,11 @@ export function SiteHeader() {
           to="/"
           className="flex items-center gap-2.5 pr-3 font-display text-base font-bold tracking-tight"
         >
-          <span
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-primary-foreground"
-            style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-glow-amber)" }}
-          >
-            <MapIcon size={16} strokeWidth={2.5} />
-          </span>
+          <img
+            src={logoAsset.url}
+            alt="US Miles Club"
+            className="h-9 w-9 rounded-lg object-cover"
+          />
           <span className="hidden sm:inline">US Miles Club</span>
         </Link>
 
@@ -81,15 +71,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            onClick={toggle}
-            className="btn btn-ghost"
-            aria-label={light ? "Switch to dark theme" : "Switch to light theme"}
-            style={{ minHeight: 40, minWidth: 40, padding: "0 0.6rem", borderRadius: 999 }}
-          >
-            {light ? <Moon size={16} strokeWidth={2} /> : <Sun size={16} strokeWidth={2} />}
-          </button>
           {signedIn === false && (
             <Link to="/auth" className="btn btn-cta">
               Join the Club
