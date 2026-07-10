@@ -133,15 +133,15 @@ function Index() {
       <div className="relative w-full px-6 py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
+          <section className="grid gap-10 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
             {/* LEFT */}
-            <div className="flex flex-col justify-between py-4 lg:py-8">
-              <div>
+            <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
+              <div className="min-w-0">
                 <span className="chip">
                   <MapPin size={12} strokeWidth={2} />
                   United States · Live leaderboard
                 </span>
-                <h1 className="mt-6 font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.8rem,5.6vw,6rem)]">
+                <h1 className="mt-6 font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.4rem,4vw,4.6rem)] break-words hyphens-auto">
                   Every mile
                   <br />
                   your
