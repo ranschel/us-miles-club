@@ -66,6 +66,8 @@
   --color-map-4: var(--map-4);
   --color-map-5: var(--map-5);
   --color-map-hover: var(--map-hover);
+  --color-map-stroke: var(--map-stroke);
+  --color-map-stroke-selected: var(--map-stroke-selected);
 
   --shadow-glow-amber: 0 0 24px rgba(255, 107, 53, 0.35), 0 0 60px rgba(247, 197, 43, 0.15);
   --shadow-glow-cyan: 0 0 22px rgba(94, 234, 255, 0.35);
