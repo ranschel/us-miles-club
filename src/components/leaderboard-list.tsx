@@ -22,7 +22,7 @@ export function CityList({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg font-bold">Cities in {countyName} County</h3>
+        <h3 className="font-display text-lg font-bold">Top Cities - {countyName} County</h3>
         <span className="mono text-xs text-text-secondary">{cities.length} active</span>
       </div>
       <label className="relative block mb-3">

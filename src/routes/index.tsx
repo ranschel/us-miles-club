@@ -299,14 +299,6 @@ function Index() {
               </div>
 
               <div className="space-y-6">
-                <LeaderboardList
-                  title={`Top counties · ${stateName(stateCode)}`}
-                  items={topCountiesInState}
-                  loading={isLoading}
-                  emptyLabel="No miles logged in this state yet."
-                  onSelect={(key) => setSearch({ county: key })}
-                />
-
                 {selectedCounty && (
                   <div className="glass">
                     <CityList
@@ -316,6 +308,14 @@ function Index() {
                     />
                   </div>
                 )}
+
+                <LeaderboardList
+                  title={`Top counties · ${stateName(stateCode)}`}
+                  items={topCountiesInState}
+                  loading={isLoading}
+                  emptyLabel="No miles logged in this state yet."
+                  onSelect={(key) => setSearch({ county: key })}
+                />
               </div>
             </div>
           </section>
