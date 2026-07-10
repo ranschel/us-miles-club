@@ -82,32 +82,68 @@ export function LeaderboardList({
   loading,
   emptyLabel = "Nothing here yet.",
   onSelect,
+  searchable = false,
+  searchPlaceholder = "Search",
+  topN = 20,
 }: {
   title: string;
   items: { key: string; label: string; sub?: string; miles: number; count: number }[];
   loading?: boolean;
   emptyLabel?: string;
   onSelect?: (key: string) => void;
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  topN?: number;
 }) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const filtered = query
+    ? items.filter(
+        (it) =>
+          it.label.toLowerCase().includes(query) ||
+          (it.sub ?? "").toLowerCase().includes(query),
+      )
+    : items.slice(0, topN);
+
   return (
     <div className="glass-strong p-5">
-      <div className="mb-4 flex items-baseline justify-between">
+      <div className="mb-3 flex items-baseline justify-between">
         <h3 className="font-display text-lg font-bold leading-[0.98] tracking-tight">{title}</h3>
         <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
           Total miles
         </span>
       </div>
+      {searchable && (
+        <label className="relative mb-3 block">
+          <span className="sr-only">{searchPlaceholder}</span>
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
+            aria-hidden
+          />
+          <input
+            type="search"
+            className="field-input pl-8 text-sm"
+            placeholder={searchPlaceholder}
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </label>
+      )}
       {loading ? (
         <div className="space-y-2">
           {[0, 1, 2, 3, 4].map((i) => (
             <div key={i} className="skeleton h-12" />
           ))}
         </div>
-      ) : items.length === 0 ? (
-        <p className="text-sm text-text-secondary">{emptyLabel}</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-text-secondary">
+          {query ? "No matches. Try a different search." : emptyLabel}
+        </p>
       ) : (
         <ol className="space-y-1">
-          {items.map((it, i) => {
+          {filtered.map((it, i) => {
+            const rank = query ? items.indexOf(it) + 1 : i + 1;
             const clickable = !!onSelect;
             const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
               clickable
@@ -117,7 +153,7 @@ export function LeaderboardList({
             const content = (
               <>
                 <span className="mono w-8 text-xs font-semibold text-secondary">
-                  {String(i + 1).padStart(2, "0")}
+                  {String(rank).padStart(2, "0")}
                 </span>
                 <div className="flex-1 min-w-0">
                   <div
@@ -162,3 +198,4 @@ export function LeaderboardList({
     </div>
   );
 }
+

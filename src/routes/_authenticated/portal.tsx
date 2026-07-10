@@ -26,6 +26,8 @@ import {
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
+import { WorkoutChart } from "@/components/workout-chart";
+import { BadgesPanel } from "@/components/badges-panel";
 import type { Sport } from "@/lib/public-workouts";
 
 export const Route = createFileRoute("/_authenticated/portal")({
@@ -293,7 +295,12 @@ function Portal() {
         </div>
       </div>
 
+      <BadgesPanel workouts={data} />
+
+      <WorkoutChart workouts={data} />
+
       <div className="card mb-6">
+
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold">Your rankings</h2>
