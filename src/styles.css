@@ -110,6 +110,8 @@
   --map-4: rgba(255, 130, 60, 0.78);
   --map-5: #FFB84A;
   --map-hover: #5EEAFF;
+  --map-stroke: rgba(94, 234, 255, 0.22);
+  --map-stroke-selected: rgba(94, 234, 255, 0.55);
 
   --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #F7C52B 100%);
   --gradient-void: radial-gradient(ellipse at 20% 0%, rgba(94, 234, 255, 0.06), transparent 60%),
