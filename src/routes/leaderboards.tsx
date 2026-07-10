@@ -6,6 +6,7 @@ import { LeaderboardList } from "@/components/leaderboard-list";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, aggregateIndividuals, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 export const Route = createFileRoute("/leaderboards")({
   component: Leaderboards,
@@ -22,9 +23,14 @@ export const Route = createFileRoute("/leaderboards")({
         property: "og:description",
         content: "Live state, county, city, and individual mileage leaderboards across the US.",
       },
+      { property: "og:url", content: "/leaderboards" },
+      { property: "og:image", content: logoAsset.url },
+      { name: "twitter:image", content: logoAsset.url },
     ],
+    links: [{ rel: "canonical", href: "/leaderboards" }],
   }),
 });
+
 
 function Leaderboards() {
   const [sports, setSports] = useState<Sport[]>(["walk", "run", "bike"]);
