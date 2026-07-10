@@ -92,7 +92,7 @@ export function LeaderboardList({
   return (
     <div className="glass-strong p-5">
       <div className="mb-4 flex items-baseline justify-between">
-        <h3 className="font-display text-lg font-bold tracking-tight">{title}</h3>
+        <h3 className="font-display text-lg font-bold leading-[0.98] tracking-tight">{title}</h3>
         <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
           Total miles
         </span>
@@ -120,7 +120,7 @@ export function LeaderboardList({
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="font-display font-semibold truncate">{it.label}</div>
+                  <div className="font-display font-bold tracking-tight truncate">{it.label}</div>
                   {it.sub && (
                     <div className="text-xs text-text-secondary truncate">{it.sub}</div>
                   )}
