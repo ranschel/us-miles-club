@@ -133,14 +133,15 @@ function Index() {
       <div className="relative w-full px-6 py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-start">
+          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-center lg:min-h-[calc(100vh-5rem)]">
             {/* LEFT */}
-            <div className="pt-6 lg:sticky lg:top-24">
+            <div className="pt-2">
+
               <span className="chip">
                 <MapPin size={12} strokeWidth={2} />
                 United States · Live leaderboard
               </span>
-              <h1 className="mt-5 font-display text-[2.6rem] md:text-[3.4rem] font-bold leading-[1.02] tracking-tight">
+              <h1 className="mt-5 font-display text-[2.8rem] xl:text-[3.8rem] 2xl:text-[4.6rem] font-bold leading-[1.02] tracking-tight">
                 Every mile your
                 <br />
                 neighborhood moves,
@@ -188,13 +189,14 @@ function Index() {
                   <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-4 flex items-center justify-center min-h-[70vh] lg:min-h-[calc(100vh-9rem)]">
                   <NationalMap
                     byState={byState}
                     selected={null}
                     onSelect={(code) => setSearch({ state: code })}
                   />
                 </div>
+
 
                 {/* Leaderboard overlay — bottom right of map */}
                 <div className="mt-4 lg:mt-0 lg:absolute lg:bottom-6 lg:right-6 lg:w-[340px]">
