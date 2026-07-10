@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Map as MapIcon, Trophy, User, Plus, Sun, Moon } from "lucide-react";
+import { Map as MapIcon, Trophy, User, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 function useSession() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
