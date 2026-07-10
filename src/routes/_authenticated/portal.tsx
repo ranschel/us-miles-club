@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SportFilter } from "@/components/sport-filter";
 import {
   listMyWorkouts,
   deleteWorkout,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
+import type { Sport } from "@/lib/public-workouts";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
