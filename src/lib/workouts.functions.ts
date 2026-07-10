@@ -1,8 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { createHash, randomBytes } from "crypto";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { aggregate, aggregateCities, aggregateIndividuals, mostMilesBy } from "@/lib/aggregate";
 import type { WorkoutRow } from "@/lib/public-workouts";
+
+const RECOVERY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function generateRecoveryCode(): string {
+  const bytes = randomBytes(16);
+  let out = "";
+  for (let i = 0; i < 16; i++) {
+    out += RECOVERY_ALPHABET[bytes[i] % RECOVERY_ALPHABET.length];
+    if (i % 4 === 3 && i !== 15) out += "-";
+  }
+  return out;
+}
+
+function normalizeRecoveryCode(raw: string): string {
+  return raw.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+}
+
+function hashRecoveryCode(raw: string): string {
+  return createHash("sha256").update(normalizeRecoveryCode(raw)).digest("hex");
+}
+
 
 const WorkoutFields = z.object({
   sport: z.enum(["walk", "run", "bike"]),
