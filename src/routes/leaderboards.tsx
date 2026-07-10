@@ -102,7 +102,7 @@ function Leaderboards() {
         <SportFilter value={sports} onChange={setSports} />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <LeaderboardList title="States" items={topStates} loading={isLoading} searchable searchPlaceholder="Search states" />
         <LeaderboardList title="Counties" items={topCounties} loading={isLoading} searchable searchPlaceholder="Search counties" />
         <LeaderboardList title="Cities" items={topCities} loading={isLoading} searchable searchPlaceholder="Search cities" />
