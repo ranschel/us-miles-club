@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, MapPin, Trophy } from "lucide-react";
+import { ArrowLeft, Trophy } from "lucide-react";
 
 import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
@@ -12,6 +12,7 @@ import { aggregate, citiesForCounty, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
@@ -30,9 +31,20 @@ export const Route = createFileRoute("/")({
         content:
           "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
       },
+      { property: "og:title", content: "US Miles Club — live national mileage map" },
+      {
+        property: "og:description",
+        content:
+          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+      },
+      { property: "og:url", content: "/" },
+      { property: "og:image", content: logoAsset.url },
+      { name: "twitter:image", content: logoAsset.url },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
 });
+
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -154,10 +166,11 @@ function Index() {
       {/* Background flourish */}
       <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
-      <div className="relative w-full px-6 py-8 lg:px-10">
+      <div className="relative w-full px-4 py-6 sm:px-6 md:py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-10 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
+          <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
+
             {/* LEFT */}
             <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
               <div className="min-w-0">
@@ -195,8 +208,8 @@ function Index() {
               </div>
 
 
-              <div>
-                <div className="grid grid-cols-3 gap-6 max-w-lg">
+              <div className="mt-8 lg:mt-0">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-lg">
                   <Stat
                     label="Miles logged"
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
@@ -209,6 +222,7 @@ function Index() {
                   Updated in real time · miles + logs
                 </p>
               </div>
+
             </div>
 
 

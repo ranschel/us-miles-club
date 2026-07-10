@@ -13,7 +13,9 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
+import { SiteFooter } from "../components/site-footer";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -96,10 +98,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@usmilesclub" },
+      { name: "twitter:title", content: "US Miles Club" },
+      {
+        name: "twitter:description",
+        content:
+          "A friendly, map-driven mileage leaderboard for real US counties.",
+      },
+      { name: "theme-color", content: "#f97316" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: logoAsset.url },
+      { rel: "apple-touch-icon", href: logoAsset.url },
     ],
   }),
   shellComponent: RootShell,
@@ -145,12 +156,7 @@ function RootComponent() {
         <main className="flex-1" suppressHydrationWarning>
           <Outlet />
         </main>
-        <footer
-          className="border-t border-border py-6 text-center text-xs text-text-secondary"
-          suppressHydrationWarning
-        >
-          Built for neighbors moving together. US Miles Club.
-        </footer>
+        <SiteFooter />
       </div>
       <Toaster
         position="bottom-right"
