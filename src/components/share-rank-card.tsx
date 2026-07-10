@@ -124,19 +124,35 @@ export function ShareRankCard({
                 border: "1px solid rgba(249, 115, 22, 0.35)",
               }}
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div
-                    className="text-[10px] font-black uppercase tracking-[0.2em]"
-                    style={{ color: "#f97316" }}
-                  >
-                    US Miles Club
-                  </div>
-                  <div
-                    className="mt-1 text-2xl font-black tracking-tight"
-                    style={{ color: "#ffffff" }}
-                  >
-                    {displayName}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={logoAsset.url}
+                    alt="US Miles Club"
+                    crossOrigin="anonymous"
+                    width={44}
+                    height={44}
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 10,
+                      objectFit: "cover",
+                      border: "1px solid rgba(249, 115, 22, 0.4)",
+                    }}
+                  />
+                  <div>
+                    <div
+                      className="text-[10px] font-black uppercase tracking-[0.2em]"
+                      style={{ color: "#f97316" }}
+                    >
+                      US Miles Club
+                    </div>
+                    <div
+                      className="mt-1 text-2xl font-black tracking-tight"
+                      style={{ color: "#ffffff" }}
+                    >
+                      {displayName}
+                    </div>
                   </div>
                 </div>
                 <div
