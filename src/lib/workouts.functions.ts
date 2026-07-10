@@ -372,7 +372,7 @@ export const redeemRecoveryCode = createServerFn({ method: "POST" })
     if (updErr) throw new Error(updErr.message);
 
     await supabaseAdmin
-      .from("profiles")
+      .from("profile_recovery")
       .update({ recovery_code_hash: null, recovery_code_set_at: null })
       .eq("user_id", user.id);
 
