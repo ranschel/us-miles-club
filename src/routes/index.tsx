@@ -133,7 +133,7 @@ function Index() {
       <div className="relative w-full px-6 py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
+          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
             {/* LEFT */}
             <div className="flex flex-col justify-center pt-2">
 
