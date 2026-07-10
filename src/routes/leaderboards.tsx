@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
-import { aggregate, filterSports } from "@/lib/aggregate";
+import { aggregate, aggregateIndividuals, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 
 export const Route = createFileRoute("/leaderboards")({
@@ -15,12 +15,12 @@ export const Route = createFileRoute("/leaderboards")({
       {
         name: "description",
         content:
-          "See the top states, counties, and cities on the US Miles Club leaderboard. Filter by walk, run, or bike.",
+          "See the top states, counties, cities, and individuals on the US Miles Club leaderboard. Filter by walk, run, or bike.",
       },
       { property: "og:title", content: "US Miles Club leaderboards" },
       {
         property: "og:description",
-        content: "Live state, county, and city mileage leaderboards across the US.",
+        content: "Live state, county, city, and individual mileage leaderboards across the US.",
       },
     ],
   }),
@@ -78,6 +78,17 @@ function Leaderboards() {
     .sort((a, b) => b.miles - a.miles)
     .slice(0, 20);
 
+  const topIndividuals = useMemo(() => {
+    return aggregateIndividuals(filtered)
+      .slice(0, 20)
+      .map((p) => ({
+        key: p.user_id ?? "__anon__",
+        label: p.full_name?.trim() || "Anonymous",
+        miles: p.totalMiles,
+        count: p.count,
+      }));
+  }, [filtered]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -90,10 +101,11 @@ function Leaderboards() {
         <SportFilter value={sports} onChange={setSports} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <LeaderboardList title="States" items={topStates} loading={isLoading} />
         <LeaderboardList title="Counties" items={topCounties} loading={isLoading} />
         <LeaderboardList title="Cities" items={topCities} loading={isLoading} />
+        <LeaderboardList title="Individuals" items={topIndividuals} loading={isLoading} />
       </div>
     </div>
   );
