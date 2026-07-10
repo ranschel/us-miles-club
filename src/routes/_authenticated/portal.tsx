@@ -141,6 +141,12 @@ function Portal() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <ShareRankCard
+            name={profile?.full_name ?? ""}
+            totalMiles={total}
+            rankings={rankings}
+            sports={sportFilter}
+          />
           <Link to="/log" className="btn btn-primary">
             <Plus size={18} /> Log workout
           </Link>
@@ -149,6 +155,7 @@ function Portal() {
           </button>
         </div>
       </div>
+
 
       {needsName && (
         <div className="card mb-6 border-primary/40 ring-2 ring-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.6)]">
