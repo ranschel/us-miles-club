@@ -77,17 +77,21 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
           <div className="mono text-lg font-bold">{formatMiles(total8w)}</div>
         </div>
       </div>
-      <div className="mt-5 flex h-40 items-end gap-2">
+      <div className="mt-5 flex h-40 gap-2">
         {weeks.map((w, i) => {
           const pct = (w.miles / max) * 100;
           const isCurrent = i === weeks.length - 1;
           return (
-            <div key={i} className="flex flex-1 flex-col items-center gap-2">
-              <div className="relative flex h-full w-full items-end">
+            <div key={i} className="flex h-full flex-1 flex-col items-center gap-2">
+              <div className="flex w-full flex-1 items-end">
                 <div
                   className={`w-full rounded-t-md transition-all ${
-                    isCurrent ? "bg-primary" : "bg-primary/40"
-                  } ${w.miles === 0 ? "bg-muted-foreground/10" : ""}`}
+                    w.miles === 0
+                      ? "bg-muted-foreground/10"
+                      : isCurrent
+                        ? "bg-primary"
+                        : "bg-primary/40"
+                  }`}
                   style={{ height: `${Math.max(pct, w.miles > 0 ? 4 : 2)}%` }}
                   title={`${formatMiles(w.miles)} — week of ${fmtWeekLabel(w.start)}`}
                 />
@@ -99,6 +103,7 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
           );
         })}
       </div>
+
     </div>
   );
 }
