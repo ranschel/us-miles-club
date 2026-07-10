@@ -35,11 +35,11 @@ export const Route = createFileRoute("/")({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="glass-strong flex flex-col items-center justify-center px-4 py-5 text-center">
-      <div className="mono text-[0.7rem] uppercase tracking-[0.18em] text-text-secondary">
+    <div className="glass-strong flex flex-col items-center justify-center px-3 py-4 text-center">
+      <div className="mono whitespace-nowrap text-[0.65rem] uppercase tracking-[0.14em] text-text-secondary">
         {label}
       </div>
-      <div className="mt-1 font-display text-[clamp(2.4rem,4.5vw,3.8rem)] font-black leading-[0.95] tracking-tight tabular-nums text-foreground">
+      <div className="mt-1 font-display text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-[0.95] tracking-tight tabular-nums text-foreground">
         {value}
       </div>
     </div>
