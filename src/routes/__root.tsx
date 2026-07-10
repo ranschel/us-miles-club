@@ -16,6 +16,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+import bgAsset from "@/assets/app-bg.png.asset.json";
 
 function NotFoundComponent() {
   return (
