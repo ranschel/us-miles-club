@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -38,6 +39,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const LeaderboardsRoute = LeaderboardsRouteImport.update({
   id: '/leaderboards',
   path: '/leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/privacy': typeof PrivacyRoute
   '/recover': typeof RecoverRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/privacy': typeof PrivacyRoute
   '/recover': typeof RecoverRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/privacy': typeof PrivacyRoute
   '/recover': typeof RecoverRoute
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/contact'
     | '/leaderboards'
     | '/privacy'
     | '/recover'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/contact'
     | '/leaderboards'
     | '/privacy'
     | '/recover'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/contact'
     | '/leaderboards'
     | '/privacy'
     | '/recover'
@@ -147,6 +159,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
   LeaderboardsRoute: typeof LeaderboardsRoute
   PrivacyRoute: typeof PrivacyRoute
   RecoverRoute: typeof RecoverRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboards'
       fullPath: '/leaderboards'
       preLoaderRoute: typeof LeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
   LeaderboardsRoute: LeaderboardsRoute,
   PrivacyRoute: PrivacyRoute,
   RecoverRoute: RecoverRoute,

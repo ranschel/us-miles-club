@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, MapPin, Trophy } from "lucide-react";
+import { ArrowLeft, Trophy } from "lucide-react";
 
 import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
@@ -12,6 +12,7 @@ import { aggregate, citiesForCounty, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
@@ -30,9 +31,20 @@ export const Route = createFileRoute("/")({
         content:
           "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
       },
+      { property: "og:title", content: "US Miles Club — live national mileage map" },
+      {
+        property: "og:description",
+        content:
+          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+      },
+      { property: "og:url", content: "/" },
+      { property: "og:image", content: logoAsset.url },
+      { name: "twitter:image", content: logoAsset.url },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
 });
+
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
