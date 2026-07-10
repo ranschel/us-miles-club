@@ -190,6 +190,7 @@ function LogWorkout() {
       }
       qc.invalidateQueries({ queryKey: ["my-workouts"] });
       qc.invalidateQueries({ queryKey: ["public-workouts"] });
+      qc.invalidateQueries({ queryKey: ["my-rankings"] });
       if (isEdit) qc.invalidateQueries({ queryKey: ["workout", editId] });
       navigate({ to: "/portal" });
     },
