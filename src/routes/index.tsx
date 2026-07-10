@@ -182,9 +182,15 @@ function Index() {
                   trackers, no feeds — just neighbors moving together.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Link to="/auth" className="btn btn-cta">
-                    Join the Club
-                  </Link>
+                  {signedIn ? (
+                    <Link to="/portal" className="btn btn-cta">
+                      Go to my portal
+                    </Link>
+                  ) : (
+                    <Link to="/auth" className="btn btn-cta">
+                      Join the Club
+                    </Link>
+                  )}
                 </div>
               </div>
 
