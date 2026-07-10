@@ -11,7 +11,7 @@ import { Footprints, Bike, PersonStanding, ArrowLeft } from "lucide-react";
 
 import { createWorkout, updateWorkout, getWorkout } from "@/lib/workouts.functions";
 import { STATES, stateFipsFromCode } from "@/lib/us-geo";
-import { fromDateTimeLocal, kmFromMiles, toDateTimeLocal } from "@/lib/format";
+import { fromDateTimeLocal, milesFromKm, toDateTimeLocal } from "@/lib/format";
 
 const SearchSchema = z.object({ id: z.string().uuid().optional() });
 
@@ -136,7 +136,7 @@ function LogWorkout() {
   const distanceMiles = useMemo(() => {
     const n = parseFloat(d.distance);
     if (!Number.isFinite(n) || n <= 0) return NaN;
-    return d.unit === "mi" ? n : kmFromMiles(n);
+    return d.unit === "mi" ? n : milesFromKm(n);
   }, [d.distance, d.unit]);
 
   const validate = (): boolean => {
