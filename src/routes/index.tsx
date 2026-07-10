@@ -179,9 +179,9 @@ function Index() {
                   <br />
                   your
                   <br />
-                  neighborhood
+                  state
                   <br />
-                  moves,
+                  climbs,
                   <br />
                   <span
                     className="bg-clip-text text-transparent"
@@ -192,7 +192,7 @@ function Index() {
                 </h1>
                 <p className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-text-secondary">
                   Log a walk, run, or ride and watch your county climb the national board. No
-                  trackers, no feeds — just neighbors moving together.
+                  trackers, no feeds — just counties and states moving together.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   {signedIn ? (

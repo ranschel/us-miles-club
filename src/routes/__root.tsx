@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Log your walks, runs, and rides. Watch your county and state climb a real US map. No trackers, no feeds — just neighbors moving together.",
+          "Log your walks, runs, and rides. Watch your county and state climb a real US map. No trackers, no feeds — just counties and states moving together.",
       },
       { name: "author", content: "US Miles Club" },
       { property: "og:title", content: "US Miles Club" },

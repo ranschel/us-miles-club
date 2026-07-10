@@ -9,7 +9,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "US Miles Club is a friendly, map-driven mileage leaderboard for real US counties. No trackers, no feeds — just neighbors moving together.",
+          "US Miles Club is a friendly, map-driven mileage leaderboard for real US counties. No trackers, no feeds — just counties and states moving together.",
       },
       { property: "og:title", content: "About US Miles Club" },
       {
@@ -41,7 +41,7 @@ function About() {
           <MapPin size={20} className="text-primary" />
           <h2 className="mt-2 font-bold">Local first</h2>
           <p className="mt-1 text-sm text-text-secondary">
-            Your miles put your county on the map. Real neighborhoods, real cities.
+            Your miles put your county on the map. Real counties, real states.
           </p>
         </div>
         <div className="card">
