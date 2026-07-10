@@ -16,6 +16,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+import bgAsset from "@/assets/app-bg.png.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -149,9 +150,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div
-        className="flex min-h-screen flex-col bg-background text-foreground"
+        className="relative flex min-h-screen flex-col text-foreground"
         suppressHydrationWarning
       >
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${bgAsset.url})` }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-background/70"
+        />
         <SiteHeader />
         <main className="flex-1" suppressHydrationWarning>
           <Outlet />
