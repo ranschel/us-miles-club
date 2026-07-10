@@ -113,15 +113,35 @@ export const getMyProfile = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, monthly_goal_miles")
       .eq("user_id", context.userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     return {
       full_name: data?.full_name ?? "",
+      monthly_goal_miles: data?.monthly_goal_miles ?? null,
       email: (context.claims as { email?: string }).email ?? "",
     };
   });
+
+const GoalInput = z.object({
+  monthly_goal_miles: z.number().int().positive().max(10000).nullable(),
+});
+
+export const updateMyGoal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => GoalInput.parse(data))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles")
+      .upsert(
+        { user_id: context.userId, monthly_goal_miles: data.monthly_goal_miles },
+        { onConflict: "user_id" },
+      );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 const RankingsInput = z.object({
   sports: z.enum(["walk", "run", "bike"]).array(),

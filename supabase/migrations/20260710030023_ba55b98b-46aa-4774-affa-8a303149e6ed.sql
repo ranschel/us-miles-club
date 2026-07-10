@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS monthly_goal_miles integer;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_monthly_goal_miles_range CHECK (monthly_goal_miles IS NULL OR (monthly_goal_miles > 0 AND monthly_goal_miles <= 10000));

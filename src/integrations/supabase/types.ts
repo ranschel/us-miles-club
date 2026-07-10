@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           full_name: string
+          monthly_goal_miles: number | null
           recovery_code_hash: string | null
           recovery_code_set_at: string | null
           updated_at: string
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           created_at?: string
           full_name?: string
+          monthly_goal_miles?: number | null
           recovery_code_hash?: string | null
           recovery_code_set_at?: string | null
           updated_at?: string
@@ -34,6 +36,7 @@ export type Database = {
         Update: {
           created_at?: string
           full_name?: string
+          monthly_goal_miles?: number | null
           recovery_code_hash?: string | null
           recovery_code_set_at?: string | null
           updated_at?: string
