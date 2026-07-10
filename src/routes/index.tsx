@@ -58,7 +58,7 @@ function Stat({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div
-        className="mt-1 font-display text-4xl font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent"
+        className="mt-1 font-display text-[clamp(1.5rem,7vw,2.25rem)] font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent break-words"
         style={{ backgroundImage: "var(--gradient-primary)" }}
       >
         {value}
