@@ -100,7 +100,7 @@ export const listMyWorkouts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("workouts")
-      .select("id, sport, distance_miles, state_code, county_name, city, performed_at")
+      .select("id, sport, distance_miles, state_code, county_fips, county_name, city, performed_at")
       .eq("user_id", context.userId)
       .order("performed_at", { ascending: false })
       .limit(200);
