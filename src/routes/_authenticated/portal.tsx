@@ -10,6 +10,7 @@ import {
   deleteWorkout,
   getMyProfile,
   updateMyProfile,
+  getMyRankings,
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
