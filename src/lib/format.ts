@@ -15,6 +15,15 @@ export function sportLabel(s: "walk" | "run" | "bike"): string {
   return s === "walk" ? "Walk" : s === "run" ? "Run" : "Bike";
 }
 
+export function abbreviateName(fullName: string): string {
+  const name = fullName.trim();
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return name || "Anonymous";
+  const first = parts.slice(0, -1).join(" ");
+  const lastInitial = parts.at(-1)![0]?.toUpperCase() ?? "";
+  return `${first} ${lastInitial}.`;
+}
+
 export function formatDateTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString(undefined, {
