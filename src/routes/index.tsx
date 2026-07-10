@@ -130,7 +130,7 @@ function Index() {
       {/* Background flourish */}
       <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
-      <div className="relative mx-auto max-w-[1600px] px-6 py-8">
+      <div className="relative w-full px-6 py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-start">
