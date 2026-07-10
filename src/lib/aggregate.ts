@@ -16,6 +16,10 @@ export interface StateAgg extends Aggregate {
 export interface CityAgg extends Aggregate {
   name: string;
 }
+export interface IndividualAgg extends Aggregate {
+  user_id: string | null;
+  full_name: string | null;
+}
 
 export function aggregate(rows: WorkoutRow[]) {
   const byState = new Map<string, StateAgg>();
@@ -40,6 +44,23 @@ export function aggregate(rows: WorkoutRow[]) {
   }
 
   return { byState, byCounty };
+}
+
+export function aggregateIndividuals(rows: WorkoutRow[]): IndividualAgg[] {
+  const map = new Map<string, IndividualAgg>();
+  for (const r of rows) {
+    const key = r.user_id ?? "__anon__";
+    const existing = map.get(key) ?? {
+      user_id: r.user_id ?? null,
+      full_name: r.full_name ?? null,
+      totalMiles: 0,
+      count: 0,
+    };
+    existing.totalMiles += Number(r.distance_miles);
+    existing.count += 1;
+    map.set(key, existing);
+  }
+  return [...map.values()].sort((a, b) => b.totalMiles - a.totalMiles);
 }
 
 export function citiesForCounty(rows: WorkoutRow[], countyFips: string): CityAgg[] {
