@@ -157,7 +157,7 @@ export function LeaderboardList({
                 </span>
                 <div className="flex-1 min-w-0">
                   <div
-                    className="font-display font-bold tracking-tight break-words [overflow-wrap:normal] [word-break:normal]"
+                    className="font-display font-bold tracking-tight truncate"
                     title={it.label}
                   >
                     {it.label}
