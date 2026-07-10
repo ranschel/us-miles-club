@@ -150,7 +150,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div
-        className="relative flex min-h-screen flex-col bg-background text-foreground"
+        className="relative flex min-h-screen flex-col text-foreground"
         suppressHydrationWarning
       >
         <div
