@@ -137,11 +137,7 @@ function Index() {
             {/* LEFT */}
             <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
               <div className="min-w-0">
-                <span className="chip">
-                  <MapPin size={12} strokeWidth={2} />
-                  United States · Live leaderboard
-                </span>
-                <h1 className="mt-6 font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.4rem,4vw,4.6rem)] break-words hyphens-auto">
+                <h1 className="font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.4rem,4vw,4.6rem)] break-words hyphens-auto">
                   Every mile
                   <br />
                   your
@@ -157,23 +153,17 @@ function Index() {
                     on the map.
                   </span>
                 </h1>
-              </div>
-
-              <div>
-                <p className="max-w-lg text-[1.05rem] leading-relaxed text-text-secondary">
+                <p className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-text-secondary">
                   Log a walk, run, or ride and watch your county climb the national board. No
                   trackers, no feeds — just neighbors moving together.
                 </p>
-
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-3">
                   <Link to="/auth" className="btn btn-cta">
                     Join the Club
                   </Link>
-                  <a href="#explore" className="btn btn-secondary">
-                    Explore the map
-                  </a>
                 </div>
               </div>
+
 
               <div>
                 <div className="grid grid-cols-3 gap-6 max-w-lg">
