@@ -47,8 +47,8 @@ function Portal() {
   });
 
   const { data: rankings } = useQuery({
-    queryKey: ["my-rankings"],
-    queryFn: () => getRankings(),
+    queryKey: ["my-rankings", sportFilter],
+    queryFn: () => getRankings({ data: { sports: sportFilter } }),
   });
 
   const [editingName, setEditingName] = useState(false);
