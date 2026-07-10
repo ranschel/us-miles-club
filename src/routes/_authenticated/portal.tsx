@@ -71,6 +71,7 @@ function Portal() {
       toast.success("Workout deleted.");
       qc.invalidateQueries({ queryKey: ["my-workouts"] });
       qc.invalidateQueries({ queryKey: ["public-workouts"] });
+      qc.invalidateQueries({ queryKey: ["my-rankings"] });
     },
     onError: (e: Error) => toast.error(`Couldn't delete: ${e.message}`),
   });
