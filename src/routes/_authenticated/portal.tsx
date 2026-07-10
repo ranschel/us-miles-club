@@ -1,10 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyWorkouts, deleteWorkout } from "@/lib/workouts.functions";
+import {
+  listMyWorkouts,
+  deleteWorkout,
+  getMyProfile,
+  updateMyProfile,
+} from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
 
@@ -23,10 +29,33 @@ function Portal() {
   const qc = useQueryClient();
   const list = useServerFn(listMyWorkouts);
   const del = useServerFn(deleteWorkout);
+  const getProfile = useServerFn(getMyProfile);
+  const saveProfile = useServerFn(updateMyProfile);
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
     queryFn: () => list(),
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getProfile(),
+  });
+
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  useEffect(() => {
+    if (profile) setNameDraft(profile.full_name);
+  }, [profile]);
+
+  const nameMut = useMutation({
+    mutationFn: (full_name: string) => saveProfile({ data: { full_name } }),
+    onSuccess: () => {
+      toast.success("Name updated.");
+      qc.invalidateQueries({ queryKey: ["my-profile"] });
+      setEditingName(false);
+    },
+    onError: (e: Error) => toast.error(`Couldn't save: ${e.message}`),
   });
 
   const removeMut = useMutation({
@@ -47,12 +76,15 @@ function Portal() {
   }
 
   const total = data.reduce((s, r) => s + Number(r.distance_miles), 0);
+  const greeting = profile?.full_name?.trim() ? profile.full_name.split(" ")[0] : null;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tight">My portal</h1>
+          <h1 className="text-4xl font-black tracking-tight">
+            {greeting ? `Hi, ${greeting}` : "My portal"}
+          </h1>
           <p className="mt-1 text-text-secondary">
             Your logged miles and their impact on your county.
           </p>
@@ -64,6 +96,87 @@ function Portal() {
           <button type="button" onClick={signOut} className="btn btn-ghost">
             Sign out
           </button>
+        </div>
+      </div>
+
+      {/* Profile card */}
+      <div className="card mb-6">
+        <h2 className="text-xl font-bold">Account</h2>
+        <p className="text-sm text-text-secondary">
+          Your name shows up on your portal and — if your city or county reaches the top —
+          the leaderboards.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="field-label" htmlFor="profile-name">Full name</label>
+            {editingName ? (
+              <form
+                className="flex gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const v = nameDraft.trim().replace(/\s+/g, " ");
+                  if (v.length < 1) {
+                    toast.error("Enter your full name.");
+                    return;
+                  }
+                  nameMut.mutate(v);
+                }}
+              >
+                <input
+                  id="profile-name"
+                  type="text"
+                  maxLength={80}
+                  autoFocus
+                  className="field-input"
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                />
+                <button type="submit" className="btn btn-primary" disabled={nameMut.isPending}>
+                  <Save size={16} /> Save
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setNameDraft(profile?.full_name ?? "");
+                    setEditingName(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </form>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="font-bold">
+                  {profile?.full_name?.trim() ? profile.full_name : (
+                    <span className="text-text-secondary italic">No name set yet</span>
+                  )}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setEditingName(true)}
+                  aria-label="Edit full name"
+                >
+                  <Pencil size={16} /> Edit
+                </button>
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="field-label" htmlFor="profile-email">Email</label>
+            <input
+              id="profile-email"
+              type="email"
+              readOnly
+              disabled
+              value={profile?.email ?? ""}
+              className="field-input"
+            />
+            <p className="mt-1 text-xs text-text-secondary">
+              Your email is locked. Contact support to change it.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -87,7 +200,7 @@ function Portal() {
       <div className="card p-0 overflow-hidden">
         <div className="p-4 border-b border-border">
           <h2 className="text-xl font-bold">History</h2>
-          <p className="text-sm text-text-secondary">Newest first. Delete removes it forever.</p>
+          <p className="text-sm text-text-secondary">Newest first. Edit to correct, delete to remove.</p>
         </div>
 
         {isLoading ? (
@@ -136,6 +249,15 @@ function Portal() {
                     {formatDateTime(w.performed_at)}
                   </div>
                 </div>
+                <Link
+                  to="/log"
+                  search={{ id: w.id }}
+                  className="btn btn-ghost"
+                  aria-label="Edit workout"
+                  style={{ minWidth: 44 }}
+                >
+                  <Pencil size={18} strokeWidth={1.75} />
+                </Link>
                 <button
                   type="button"
                   onClick={() => {
