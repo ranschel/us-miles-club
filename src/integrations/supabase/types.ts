@@ -14,13 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      profile_recovery: {
+        Row: {
+          recovery_code_hash: string | null
+          recovery_code_set_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          recovery_code_hash?: string | null
+          recovery_code_set_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           full_name: string
           monthly_goal_miles: number | null
-          recovery_code_hash: string | null
-          recovery_code_set_at: string | null
           updated_at: string
           user_id: string
         }
@@ -28,8 +47,6 @@ export type Database = {
           created_at?: string
           full_name?: string
           monthly_goal_miles?: number | null
-          recovery_code_hash?: string | null
-          recovery_code_set_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -37,8 +54,6 @@ export type Database = {
           created_at?: string
           full_name?: string
           monthly_goal_miles?: number | null
-          recovery_code_hash?: string | null
-          recovery_code_set_at?: string | null
           updated_at?: string
           user_id?: string
         }
