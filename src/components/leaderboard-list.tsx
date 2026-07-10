@@ -121,13 +121,16 @@ export function LeaderboardList({
                 </span>
                 <div className="flex-1 min-w-0">
                   <div
-                    className="font-display font-bold tracking-tight truncate"
+                    className="font-display font-bold tracking-tight break-words hyphens-auto"
                     title={it.label}
                   >
                     {it.label}
                   </div>
                   {it.sub && (
-                    <div className="text-xs text-text-secondary truncate" title={it.sub}>
+                    <div
+                      className="text-xs text-text-secondary break-words hyphens-auto"
+                      title={it.sub}
+                    >
                       {it.sub}
                     </div>
                   )}
