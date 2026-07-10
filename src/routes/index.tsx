@@ -35,16 +35,21 @@ export const Route = createFileRoute("/")({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="glass-strong flex flex-col items-center justify-center px-3 py-4 text-center">
-      <div className="mono whitespace-nowrap text-[0.65rem] uppercase tracking-[0.14em] text-text-secondary">
+    <div className="relative">
+      <div className="mono text-[0.68rem] uppercase tracking-[0.18em] text-text-secondary">
         {label}
       </div>
       <div
-        className="mt-1 font-display text-3xl font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent"
+        className="mt-1 font-display text-4xl font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent"
         style={{ backgroundImage: "var(--gradient-primary)" }}
       >
         {value}
       </div>
+      <div
+        className="pointer-events-none absolute -inset-3 rounded-xl opacity-20 blur-xl"
+        style={{ backgroundImage: "var(--gradient-primary)" }}
+        aria-hidden
+      />
     </div>
   );
 }
@@ -168,8 +173,8 @@ function Index() {
               </div>
 
 
-              <div className="max-w-xl">
-                <div className="grid grid-cols-3 gap-4">
+              <div>
+                <div className="grid grid-cols-3 gap-6 max-w-lg">
                   <Stat
                     label="Miles logged"
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
@@ -177,8 +182,8 @@ function Index() {
                   <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
                   <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
                 </div>
-                <div className="stat-divider mt-5" />
-                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted">
+                <div className="stat-divider mt-6 max-w-lg" />
+                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
                   Updated in real time · miles + logs
                 </p>
               </div>
