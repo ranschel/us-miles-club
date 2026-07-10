@@ -27,7 +27,7 @@ export async function fetchWorkouts(sports: Sport[]): Promise<WorkoutRow[]> {
   if (error) throw new Error(error.message);
 
   const rows = (data ?? []) as Omit<WorkoutRow, "full_name">[];
-  const userIds = [...new Set(rows.map((r) => r.user_id).filter(Boolean))];
+  const userIds = [...new Set(rows.map((r) => r.user_id).filter((id): id is string => !!id))];
 
   let nameByUser = new Map<string, string>();
   if (userIds.length > 0) {
