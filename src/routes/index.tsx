@@ -35,11 +35,11 @@ export const Route = createFileRoute("/")({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <div className="mono text-[0.68rem] uppercase tracking-[0.18em] text-text-secondary">
+    <div className="glass-strong flex flex-col items-center justify-center px-4 py-5 text-center">
+      <div className="mono text-[0.7rem] uppercase tracking-[0.18em] text-text-secondary">
         {label}
       </div>
-      <div className="mt-1 font-display text-3xl font-bold tabular-nums text-foreground">
+      <div className="mt-1 font-display text-[clamp(2.4rem,4.5vw,3.8rem)] font-black leading-[0.95] tracking-tight tabular-nums text-foreground">
         {value}
       </div>
     </div>
@@ -165,8 +165,8 @@ function Index() {
               </div>
 
 
-              <div>
-                <div className="grid grid-cols-3 gap-6 max-w-lg">
+              <div className="max-w-xl">
+                <div className="grid grid-cols-3 gap-4">
                   <Stat
                     label="Miles logged"
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
@@ -174,8 +174,8 @@ function Index() {
                   <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
                   <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
                 </div>
-                <div className="stat-divider mt-5 max-w-lg" />
-                <p className="mono mt-3 text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
+                <div className="stat-divider mt-5" />
+                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted">
                   Updated in real time · miles + logs
                 </p>
               </div>
