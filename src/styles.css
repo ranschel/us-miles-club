@@ -338,7 +338,7 @@
 
   .map-region {
     fill: var(--color-map-empty);
-    stroke: rgba(94, 234, 255, 0.22);
+    stroke: var(--color-map-stroke);
     stroke-width: 0.6;
     transition: fill 260ms cubic-bezier(0.4, 0, 0.2, 1),
                 filter 260ms, stroke 260ms;
@@ -357,7 +357,7 @@
     filter: drop-shadow(0 0 14px rgba(94, 234, 255, 0.7));
   }
   .map-region[data-selected="true"] {
-    stroke: var(--color-secondary);
+    stroke: var(--color-map-stroke-selected);
     stroke-width: 1.4;
     filter: drop-shadow(0 0 12px rgba(94, 234, 255, 0.55));
   }
