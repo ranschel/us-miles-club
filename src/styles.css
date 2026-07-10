@@ -123,13 +123,17 @@
 .light {
   --background: #F5F5F7;
   --surface: rgba(255, 255, 255, 0.85);
-  --border: rgba(0, 0, 0, 0.08);
-  --foreground: #0A0B10;
-  --text-secondary: #4A4E60;
-  --text-muted: #6B6F84;
-  --muted: rgba(0, 0, 0, 0.04);
+  --border: rgba(0, 0, 0, 0.10);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --foreground: #2D2F3A;
+  --text-secondary: #5E6278;
+  --text-muted: #8B8FA3;
+  --muted: rgba(0, 0, 0, 0.05);
   --primary-foreground: #FFFFFF;
   --cta-foreground: #FFFFFF;
+
+  --map-stroke: rgba(45, 47, 58, 0.35);
+  --map-stroke-selected: rgba(0, 160, 180, 0.85);
 }
 
 @layer base {
