@@ -15,6 +15,7 @@ export interface StateAgg extends Aggregate {
 }
 export interface CityAgg extends Aggregate {
   name: string;
+  state_code: string;
 }
 export interface IndividualAgg extends Aggregate {
   user_id: string | null;
