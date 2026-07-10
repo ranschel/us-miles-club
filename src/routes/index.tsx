@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft, MapPin, Trophy } from "lucide-react";
 
@@ -11,6 +11,7 @@ import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
+import { supabase } from "@/integrations/supabase/client";
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
