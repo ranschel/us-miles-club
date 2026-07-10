@@ -123,6 +123,8 @@ function Portal() {
   const total = data.reduce((s, r) => s + Number(r.distance_miles), 0);
   const greeting = profile?.full_name?.trim() ? profile.full_name.split(" ")[0] : null;
 
+  const needsName = !profile?.full_name?.trim();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -143,6 +145,55 @@ function Portal() {
           </button>
         </div>
       </div>
+
+      {needsName && (
+        <div className="card mb-6 border-primary/40 ring-2 ring-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.6)]">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex-1">
+              <div className="mb-2 flex items-center gap-2 text-primary">
+                <Pencil size={18} strokeWidth={2.5} />
+                <span className="text-sm font-black uppercase tracking-wide">One quick thing</span>
+              </div>
+              <h2 className="text-2xl font-black tracking-tight">Add your name to the leaderboards</h2>
+              <p className="mt-1 text-text-secondary">
+                Your name is how your miles show up when your city or county climbs the rankings.
+                Without it, your effort is anonymous.
+              </p>
+            </div>
+          </div>
+          <form
+            className="mt-5 flex flex-col gap-2 sm:flex-row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const v = nameDraft.trim().replace(/\s+/g, " ");
+              if (v.length < 1) {
+                toast.error("Enter your full name.");
+                return;
+              }
+              nameMut.mutate(v);
+            }}
+          >
+            <input
+              type="text"
+              maxLength={80}
+              autoFocus
+              className="field-input flex-1 text-lg"
+              placeholder="Your full name"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              aria-label="Full name"
+            />
+            <button
+              type="submit"
+              className="btn btn-primary text-base"
+              disabled={nameMut.isPending}
+            >
+              <Save size={18} /> {nameMut.isPending ? "Saving…" : "Save my name"}
+            </button>
+          </form>
+        </div>
+      )}
+
 
       {/* Profile card */}
       <div className="card mb-6">
