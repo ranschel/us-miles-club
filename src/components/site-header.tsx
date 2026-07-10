@@ -22,21 +22,6 @@ function useSession() {
   return signedIn;
 }
 
-function useTheme() {
-  const [light, setLight] = useState<boolean>(false);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    setLight(saved === "light");
-    setReady(true);
-  }, []);
-  useEffect(() => {
-    if (!ready) return;
-    document.documentElement.classList.toggle("light", light);
-    localStorage.setItem("theme", light ? "light" : "dark");
-  }, [light, ready]);
-  return { light, ready, toggle: () => setLight((l) => !l) };
-}
 
 export function SiteHeader() {
   const signedIn = useSession();
