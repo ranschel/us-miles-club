@@ -58,7 +58,7 @@ function Stat({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div
-        className="mt-1 font-display text-[clamp(1.15rem,5.5vw,2.25rem)] font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent break-words"
+        className="mt-1 font-display text-[clamp(1.1rem,4.5vw,1.85rem)] font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent whitespace-nowrap"
         style={{ backgroundImage: "var(--gradient-primary)" }}
       >
         {value}
@@ -209,10 +209,10 @@ function Index() {
               <div className="mt-8 lg:mt-0">
                 <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-lg">
                   <Stat
-                    label="Miles logged"
+                    label="Miles"
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
                   />
-                  <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
+                  <Stat label="States" value={isLoading ? "…" : String(byState.size)} />
                   <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
                 </div>
                 <div className="stat-divider mt-6 max-w-lg" />
