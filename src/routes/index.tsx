@@ -207,6 +207,7 @@ function Index() {
                     items={topStates.slice(0, 5)}
                     loading={isLoading}
                     emptyLabel="No miles logged yet."
+                    onSelect={(key) => setSearch({ state: key })}
                   />
                 </div>
               </div>
