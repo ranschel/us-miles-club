@@ -15,6 +15,7 @@ export interface StateAgg extends Aggregate {
 }
 export interface CityAgg extends Aggregate {
   name: string;
+  state_code: string;
 }
 export interface IndividualAgg extends Aggregate {
   user_id: string | null;
@@ -68,12 +69,49 @@ export function citiesForCounty(rows: WorkoutRow[], countyFips: string): CityAgg
   for (const r of rows) {
     if (r.county_fips !== countyFips) continue;
     const key = r.city.trim();
-    const c = byCity.get(key) ?? { name: key, totalMiles: 0, count: 0 };
+    const c = byCity.get(key) ?? { name: key, state_code: r.state_code, totalMiles: 0, count: 0 };
     c.totalMiles += Number(r.distance_miles);
     c.count += 1;
     byCity.set(key, c);
   }
   return [...byCity.values()].sort((a, b) => b.totalMiles - a.totalMiles);
+}
+
+export function aggregateCities(rows: WorkoutRow[]): CityAgg[] {
+  const byCity = new Map<string, CityAgg>();
+  for (const r of rows) {
+    const key = `${r.state_code}|${r.city.trim()}`;
+    const c = byCity.get(key) ?? {
+      name: r.city.trim(),
+      state_code: r.state_code,
+      totalMiles: 0,
+      count: 0,
+    };
+    c.totalMiles += Number(r.distance_miles);
+    c.count += 1;
+    byCity.set(key, c);
+  }
+  return [...byCity.values()].sort((a, b) => b.totalMiles - a.totalMiles);
+}
+
+export function mostMilesBy<T extends { distance_miles: number }>(
+  rows: T[],
+  keyFn: (r: T) => string,
+): string | null {
+  const map = new Map<string, number>();
+  for (const r of rows) {
+    const key = keyFn(r);
+    map.set(key, (map.get(key) ?? 0) + Number(r.distance_miles));
+  }
+  let best: string | null = null;
+  let bestMiles = -1;
+  for (const [key, miles] of map) {
+    if (miles > bestMiles) {
+      bestMiles = miles;
+      best = key;
+    }
+  }
+  return best;
 }
 
 export function useHeatLevel(max: number) {

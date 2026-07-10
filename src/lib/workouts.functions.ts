@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { aggregate, aggregateCities, aggregateIndividuals, mostMilesBy } from "@/lib/aggregate";
+import type { WorkoutRow } from "@/lib/public-workouts";
 
 const WorkoutFields = z.object({
   sport: z.enum(["walk", "run", "bike"]),
@@ -96,6 +98,95 @@ export const getMyProfile = createServerFn({ method: "GET" })
     return {
       full_name: data?.full_name ?? "",
       email: (context.claims as { email?: string }).email ?? "",
+    };
+  });
+
+export const getMyRankings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: allWorkouts, error: allError } = await context.supabase
+      .from("workouts")
+      .select("id, sport, distance_miles, state_code, county_fips, county_name, city, performed_at, user_id")
+      .limit(5000);
+    if (allError) throw new Error(allError.message);
+
+    const userIds = [
+      ...new Set(
+        (allWorkouts ?? [])
+          .map((r: { user_id: string | null }) => r.user_id)
+          .filter((id: string | null): id is string => !!id),
+      ),
+    ];
+    let nameByUser = new Map<string, string>();
+    if (userIds.length > 0) {
+      const { data: profiles, error: profilesError } = await context.supabase
+        .from("profiles")
+        .select("user_id, full_name")
+        .in("user_id", userIds);
+      if (profilesError) throw new Error(profilesError.message);
+      for (const p of profiles ?? []) {
+        if (p.full_name) nameByUser.set(p.user_id, p.full_name);
+      }
+    }
+
+    const rows = (allWorkouts ?? []).map((r: { user_id: string | null; full_name?: string }) => ({
+      ...r,
+      full_name: r.user_id ? nameByUser.get(r.user_id) ?? null : null,
+    })) as WorkoutRow[];
+
+    const { data: myWorkouts, error: myError } = await context.supabase
+      .from("workouts")
+      .select("state_code, county_fips, county_name, city, distance_miles")
+      .eq("user_id", context.userId);
+    if (myError) throw new Error(myError.message);
+
+    const individuals = aggregateIndividuals(rows);
+    const cities = aggregateCities(rows);
+    const { byState, byCounty } = aggregate(rows);
+    const states = [...byState.values()].sort((a, b) => b.totalMiles - a.totalMiles);
+    const counties = [...byCounty.values()].sort((a, b) => b.totalMiles - a.totalMiles);
+
+    if (!myWorkouts || myWorkouts.length === 0) {
+      return {
+        individualRank: null,
+        cityRank: null,
+        countyRank: null,
+        stateRank: null,
+        cityName: null,
+        countyName: null,
+        stateCode: null,
+        totalIndividuals: individuals.length,
+        totalCities: cities.length,
+        totalCounties: counties.length,
+        totalStates: states.length,
+      };
+    }
+
+    const primaryState = mostMilesBy(myWorkouts, (r) => r.state_code);
+    const primaryCounty = mostMilesBy(myWorkouts, (r) => r.county_fips);
+    const primaryCity = mostMilesBy(myWorkouts, (r) => `${r.state_code}|${r.city}`);
+
+    const individualRank = individuals.findIndex((i) => i.user_id === context.userId) + 1;
+    const stateRank = states.findIndex((s) => s.code === primaryState) + 1;
+    const countyRank = counties.findIndex((c) => c.fips === primaryCounty) + 1;
+    const cityRank = cities.findIndex((c) => `${c.state_code}|${c.name}` === primaryCity) + 1;
+
+    const cityName = primaryCity?.split("|")[1] ?? null;
+    const countyName = myWorkouts.find((w) => w.county_fips === primaryCounty)?.county_name ?? null;
+    const stateCode = primaryState;
+
+    return {
+      individualRank,
+      cityRank,
+      countyRank,
+      stateRank,
+      cityName,
+      countyName,
+      stateCode,
+      totalIndividuals: individuals.length,
+      totalCities: cities.length,
+      totalCounties: counties.length,
+      totalStates: states.length,
     };
   });
 

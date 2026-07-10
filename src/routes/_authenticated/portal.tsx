@@ -10,6 +10,7 @@ import {
   deleteWorkout,
   getMyProfile,
   updateMyProfile,
+  getMyRankings,
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
@@ -31,6 +32,7 @@ function Portal() {
   const del = useServerFn(deleteWorkout);
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
+  const getRankings = useServerFn(getMyRankings);
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
@@ -40,6 +42,11 @@ function Portal() {
   const { data: profile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getProfile(),
+  });
+
+  const { data: rankings } = useQuery({
+    queryKey: ["my-rankings"],
+    queryFn: () => getRankings(),
   });
 
   const [editingName, setEditingName] = useState(false);
@@ -64,6 +71,7 @@ function Portal() {
       toast.success("Workout deleted.");
       qc.invalidateQueries({ queryKey: ["my-workouts"] });
       qc.invalidateQueries({ queryKey: ["public-workouts"] });
+      qc.invalidateQueries({ queryKey: ["my-rankings"] });
     },
     onError: (e: Error) => toast.error(`Couldn't delete: ${e.message}`),
   });
@@ -195,6 +203,71 @@ function Portal() {
             {data[0] ? formatDateTime(data[0].performed_at) : "—"}
           </div>
         </div>
+      </div>
+
+      <div className="card mb-6">
+        <h2 className="text-xl font-bold">Your rankings</h2>
+        <p className="text-sm text-text-secondary">
+          Based on where you've logged the most miles.
+        </p>
+        {rankings ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">Individual</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.individualRank ? `#${rankings.individualRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalIndividuals.toLocaleString()} people
+              </div>
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">City</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.cityRank ? `#${rankings.cityRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalCities.toLocaleString()} cities
+              </div>
+              {rankings.cityName && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.cityName}</div>
+              )}
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">County</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.countyRank ? `#${rankings.countyRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalCounties.toLocaleString()} counties
+              </div>
+              {rankings.countyName && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.countyName} County</div>
+              )}
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">State</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.stateRank ? `#${rankings.stateRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalStates.toLocaleString()} states
+              </div>
+              {rankings.stateCode && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{stateName(rankings.stateCode)}</div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="rounded-xl bg-muted p-4">
+                <div className="skeleton mb-2 h-3 w-20" />
+                <div className="skeleton h-8 w-16" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card p-0 overflow-hidden">
