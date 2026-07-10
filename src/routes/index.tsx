@@ -62,6 +62,21 @@ function Index() {
   const stateCode = search.state ?? null;
   const countyFips = search.county ?? null;
 
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setSignedIn(!!data.session);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (mounted) setSignedIn(!!session);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
   const setSearch = (
     patch: Partial<{ sports: Sport[]; state: string | null; county: string | null }>,
   ) => {
