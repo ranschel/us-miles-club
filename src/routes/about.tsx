@@ -9,7 +9,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "US Miles Club is a friendly, map-driven mileage leaderboard for real US counties. No trackers, no feeds — just neighbors moving together.",
+          "US Miles Club is a friendly, map-driven mileage leaderboard for real US counties. No trackers, no feeds — just counties and states moving together.",
       },
       { property: "og:title", content: "About US Miles Club" },
       {
