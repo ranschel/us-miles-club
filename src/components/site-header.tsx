@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Map as MapIcon, Trophy, User, Plus } from "lucide-react";
+import { Map as MapIcon, Trophy, User, Plus, Sun, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/hooks/use-theme";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 function useSession() {
@@ -22,16 +23,12 @@ function useSession() {
   return signedIn;
 }
 
-
 export function SiteHeader() {
   const signedIn = useSession();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { theme, toggle } = useTheme();
 
-  // Force dark theme site-wide
-  useEffect(() => {
-    document.documentElement.classList.remove("light");
-    localStorage.removeItem("theme");
-  }, []);
+
 
   const linkCls = (active: boolean) =>
     `inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold transition-all ${
@@ -71,6 +68,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggle}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:text-foreground hover:border-border-strong hover:bg-white/[0.04]"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {signedIn === false && (
             <Link to="/auth" className="btn btn-cta">
               Join the Club
