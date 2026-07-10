@@ -48,7 +48,7 @@ export const Route = createFileRoute("/")({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="relative">
+    <div className="relative min-w-0 overflow-visible pr-1">
       <div
         className="pointer-events-none absolute -inset-3 -z-10 rounded-xl opacity-20 blur-xl"
         style={{ backgroundImage: "var(--gradient-primary)" }}
@@ -58,7 +58,7 @@ function Stat({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div
-        className="mt-1 font-display text-[clamp(1.1rem,4.5vw,1.85rem)] font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent whitespace-nowrap"
+        className="mt-1 font-display text-[clamp(0.95rem,3.2vw,1.5rem)] font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent whitespace-nowrap overflow-visible"
         style={{ backgroundImage: "var(--gradient-primary)" }}
       >
         {value}
