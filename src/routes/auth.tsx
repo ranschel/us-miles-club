@@ -97,26 +97,6 @@ function Auth() {
         ) : (
           <form className="mt-6 space-y-4" onSubmit={submit} noValidate>
             <div>
-              <label className="field-label" htmlFor="full_name">
-                Full name
-              </label>
-              <input
-                id="full_name"
-                type="text"
-                autoComplete="name"
-                required
-                maxLength={80}
-                className="field-input"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Alex Rivera"
-                disabled={status === "sending"}
-              />
-              <p className="mt-1 text-xs text-text-secondary">
-                Shown on your portal and — if you top the boards — the leaderboards.
-              </p>
-            </div>
-            <div>
               <label className="field-label" htmlFor="email">
                 Email
               </label>
