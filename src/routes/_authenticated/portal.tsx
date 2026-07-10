@@ -32,6 +32,7 @@ function Portal() {
   const del = useServerFn(deleteWorkout);
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
+  const getRankings = useServerFn(getMyRankings);
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
@@ -41,6 +42,11 @@ function Portal() {
   const { data: profile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getProfile(),
+  });
+
+  const { data: rankings } = useQuery({
+    queryKey: ["my-rankings"],
+    queryFn: () => getRankings(),
   });
 
   const [editingName, setEditingName] = useState(false);
