@@ -5,6 +5,7 @@ import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, aggregateIndividuals, filterSports } from "@/lib/aggregate";
+import { abbreviateName } from "@/lib/format";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
@@ -83,7 +84,7 @@ function Leaderboards() {
   const topIndividuals = useMemo(() => {
     return aggregateIndividuals(filtered).map((p) => ({
       key: p.user_id ?? "__anon__",
-      label: p.full_name?.trim() || "Anonymous",
+      label: abbreviateName(p.full_name?.trim() || "Anonymous"),
       miles: p.totalMiles,
       count: p.count,
     }));
