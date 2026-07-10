@@ -135,52 +135,62 @@ function Index() {
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]" style={{ minHeight: "calc(100vh - 5rem)" }}>
             {/* LEFT */}
-            <div className="flex flex-col justify-center pt-2">
-
-
-              <span className="chip">
-                <MapPin size={12} strokeWidth={2} />
-                United States · Live leaderboard
-              </span>
-              <h1 className="mt-5 font-display text-[2.8rem] xl:text-[3.8rem] 2xl:text-[4.6rem] font-bold leading-[1.02] tracking-tight">
-                Every mile your
-                <br />
-                neighborhood moves,
-                <br />
-                <span
-                  className="bg-clip-text text-transparent"
-                  style={{ backgroundImage: "var(--gradient-primary)" }}
-                >
-                  on the map.
+            <div className="flex flex-col justify-between py-4 lg:py-8">
+              <div>
+                <span className="chip">
+                  <MapPin size={12} strokeWidth={2} />
+                  United States · Live leaderboard
                 </span>
-              </h1>
-              <p className="mt-5 max-w-md text-[0.98rem] text-text-secondary">
-                Log a walk, run, or ride and watch your county climb the national board. No
-                trackers, no feeds — just neighbors moving together.
-              </p>
-
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link to="/auth" className="btn btn-cta">
-                  Join the Club
-                </Link>
-                <a href="#explore" className="btn btn-secondary">
-                  Explore the map
-                </a>
+                <h1 className="mt-6 font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.8rem,5.6vw,6rem)]">
+                  Every mile
+                  <br />
+                  your
+                  <br />
+                  neighborhood
+                  <br />
+                  moves,
+                  <br />
+                  <span
+                    className="bg-clip-text text-transparent"
+                    style={{ backgroundImage: "var(--gradient-primary)" }}
+                  >
+                    on the map.
+                  </span>
+                </h1>
               </div>
 
-              <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
-                <Stat
-                  label="Miles logged"
-                  value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
-                />
-                <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
-                <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
+              <div>
+                <p className="max-w-lg text-[1.05rem] leading-relaxed text-text-secondary">
+                  Log a walk, run, or ride and watch your county climb the national board. No
+                  trackers, no feeds — just neighbors moving together.
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link to="/auth" className="btn btn-cta">
+                    Join the Club
+                  </Link>
+                  <a href="#explore" className="btn btn-secondary">
+                    Explore the map
+                  </a>
+                </div>
               </div>
-              <div className="stat-divider mt-6 max-w-md" />
-              <p className="mono mt-3 text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-md">
-                Updated in real time · miles + logs
-              </p>
+
+              <div>
+                <div className="grid grid-cols-3 gap-6 max-w-lg">
+                  <Stat
+                    label="Miles logged"
+                    value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
+                  />
+                  <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
+                  <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
+                </div>
+                <div className="stat-divider mt-5 max-w-lg" />
+                <p className="mono mt-3 text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
+                  Updated in real time · miles + logs
+                </p>
+              </div>
             </div>
+
 
             {/* RIGHT — map surface */}
             <div id="explore" className="relative flex flex-col">
