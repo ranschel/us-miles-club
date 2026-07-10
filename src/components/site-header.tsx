@@ -40,8 +40,13 @@ function useTheme() {
 
 export function SiteHeader() {
   const signedIn = useSession();
-  const { light, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
+
+  // Force dark theme site-wide
+  useEffect(() => {
+    document.documentElement.classList.remove("light");
+    localStorage.removeItem("theme");
+  }, []);
 
   const linkCls = (active: boolean) =>
     `inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold transition-all ${
@@ -57,12 +62,11 @@ export function SiteHeader() {
           to="/"
           className="flex items-center gap-2.5 pr-3 font-display text-base font-bold tracking-tight"
         >
-          <span
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-primary-foreground"
-            style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-glow-amber)" }}
-          >
-            <MapIcon size={16} strokeWidth={2.5} />
-          </span>
+          <img
+            src={logoAsset.url}
+            alt="US Miles Club"
+            className="h-9 w-9 rounded-lg object-cover"
+          />
           <span className="hidden sm:inline">US Miles Club</span>
         </Link>
 
