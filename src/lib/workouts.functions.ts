@@ -151,7 +151,8 @@ export const getMyRankings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => RankingsInput.parse(data))
   .handler(async ({ data, context }) => {
-    const { data: allWorkouts, error: allError } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: allWorkouts, error: allError } = await supabaseAdmin
       .from("workouts")
       .select("id, sport, distance_miles, state_code, county_fips, county_name, city, performed_at, user_id")
       .limit(5000);
@@ -166,7 +167,7 @@ export const getMyRankings = createServerFn({ method: "GET" })
     ];
     let nameByUser = new Map<string, string>();
     if (userIds.length > 0) {
-      const { data: profiles, error: profilesError } = await context.supabase
+      const { data: profiles, error: profilesError } = await supabaseAdmin
         .from("profiles")
         .select("user_id, full_name")
         .in("user_id", userIds);
