@@ -35,11 +35,19 @@ export const Route = createFileRoute("/")({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
+    <div className="relative">
+      <div
+        className="pointer-events-none absolute -inset-3 -z-10 rounded-xl opacity-20 blur-xl"
+        style={{ backgroundImage: "var(--gradient-primary)" }}
+        aria-hidden
+      />
       <div className="mono text-[0.68rem] uppercase tracking-[0.18em] text-text-secondary">
         {label}
       </div>
-      <div className="mt-1 font-display text-3xl font-bold tabular-nums text-foreground">
+      <div
+        className="mt-1 font-display text-4xl font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent"
+        style={{ backgroundImage: "var(--gradient-primary)" }}
+      >
         {value}
       </div>
     </div>
@@ -174,8 +182,8 @@ function Index() {
                   <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
                   <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
                 </div>
-                <div className="stat-divider mt-5 max-w-lg" />
-                <p className="mono mt-3 text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
+                <div className="stat-divider mt-6 max-w-lg" />
+                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
                   Updated in real time · miles + logs
                 </p>
               </div>
