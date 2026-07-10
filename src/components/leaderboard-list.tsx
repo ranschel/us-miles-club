@@ -22,7 +22,7 @@ export function CityList({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-xl font-bold">Cities in {countyName} County</h3>
+        <h3 className="font-display text-lg font-bold">Cities in {countyName} County</h3>
         <span className="mono text-xs text-text-secondary">{cities.length} active</span>
       </div>
       <label className="relative block mb-3">
@@ -52,16 +52,18 @@ export function CityList({
           No matching cities. Try clearing the search.
         </p>
       ) : (
-        <ol className="divide-y divide-border rounded-lg border border-border overflow-hidden">
+        <ol className="rounded-lg border border-white/10 overflow-hidden">
           {filtered.map((c, i) => (
             <li
               key={c.name}
-              className="flex items-center gap-3 bg-surface px-4 py-3 transition-colors hover:bg-muted"
+              className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.04] ${
+                i % 2 === 0 ? "bg-white/[0.02]" : "bg-transparent"
+              }`}
             >
-              <span className="mono w-8 shrink-0 text-sm font-bold text-text-secondary">
+              <span className="mono w-8 shrink-0 text-xs font-semibold text-text-secondary">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="flex-1 font-bold">{c.name}</span>
+              <span className="flex-1 font-medium">{c.name}</span>
               <span className="mono text-sm text-foreground">{formatMiles(c.totalMiles)}</span>
               <span className="mono text-xs text-text-secondary hidden sm:inline">
                 {c.count} log{c.count === 1 ? "" : "s"}
@@ -86,8 +88,13 @@ export function LeaderboardList({
   emptyLabel?: string;
 }) {
   return (
-    <div className="card">
-      <h3 className="text-xl font-bold mb-3">{title}</h3>
+    <div className="glass-strong p-5">
+      <div className="mb-4 flex items-baseline justify-between">
+        <h3 className="font-display text-lg font-bold tracking-tight">{title}</h3>
+        <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
+          Total miles
+        </span>
+      </div>
       {loading ? (
         <div className="space-y-2">
           {[0, 1, 2, 3, 4].map((i) => (
@@ -101,20 +108,28 @@ export function LeaderboardList({
           {items.map((it, i) => (
             <li
               key={it.key}
-              className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-muted"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/[0.04] ${
+                i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"
+              }`}
             >
-              <span className="mono w-7 text-sm font-bold text-text-secondary">
+              <span
+                className={`mono w-8 text-xs font-semibold ${
+                  i < 3 ? "text-secondary" : "text-text-secondary"
+                }`}
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="font-bold truncate">{it.label}</div>
+                <div className="font-display font-semibold truncate">{it.label}</div>
                 {it.sub && (
                   <div className="text-xs text-text-secondary truncate">{it.sub}</div>
                 )}
               </div>
               <div className="text-right">
-                <div className="mono text-sm font-bold">{formatMiles(it.miles)}</div>
-                <div className="mono text-xs text-text-secondary">
+                <div className="mono text-sm font-semibold text-foreground">
+                  {formatMiles(it.miles)}
+                </div>
+                <div className="mono text-[0.65rem] text-text-secondary">
                   {it.count} log{it.count === 1 ? "" : "s"}
                 </div>
               </div>
