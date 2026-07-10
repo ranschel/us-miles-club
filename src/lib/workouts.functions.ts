@@ -101,9 +101,14 @@ export const getMyProfile = createServerFn({ method: "GET" })
     };
   });
 
+const RankingsInput = z.object({
+  sports: z.enum(["walk", "run", "bike"]).array(),
+});
+
 export const getMyRankings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((data: unknown) => RankingsInput.parse(data))
+  .handler(async ({ data, context }) => {
     const { data: allWorkouts, error: allError } = await context.supabase
       .from("workouts")
       .select("id, sport, distance_miles, state_code, county_fips, county_name, city, performed_at, user_id")
@@ -136,17 +141,21 @@ export const getMyRankings = createServerFn({ method: "GET" })
 
     const { data: myWorkouts, error: myError } = await context.supabase
       .from("workouts")
-      .select("state_code, county_fips, county_name, city, distance_miles")
+      .select("state_code, county_fips, county_name, city, distance_miles, sport")
       .eq("user_id", context.userId);
     if (myError) throw new Error(myError.message);
 
-    const individuals = aggregateIndividuals(rows);
-    const cities = aggregateCities(rows);
-    const { byState, byCounty } = aggregate(rows);
+    const sportSet = new Set(data.sports);
+    const filteredRows = rows.filter((r) => sportSet.has(r.sport));
+    const filteredMyWorkouts = (myWorkouts ?? []).filter((w) => sportSet.has(w.sport));
+
+    const individuals = aggregateIndividuals(filteredRows);
+    const cities = aggregateCities(filteredRows);
+    const { byState, byCounty } = aggregate(filteredRows);
     const states = [...byState.values()].sort((a, b) => b.totalMiles - a.totalMiles);
     const counties = [...byCounty.values()].sort((a, b) => b.totalMiles - a.totalMiles);
 
-    if (!myWorkouts || myWorkouts.length === 0) {
+    if (filteredMyWorkouts.length === 0) {
       return {
         individualRank: null,
         cityRank: null,
@@ -162,9 +171,9 @@ export const getMyRankings = createServerFn({ method: "GET" })
       };
     }
 
-    const primaryState = mostMilesBy(myWorkouts, (r) => r.state_code);
-    const primaryCounty = mostMilesBy(myWorkouts, (r) => r.county_fips);
-    const primaryCity = mostMilesBy(myWorkouts, (r) => `${r.state_code}|${r.city}`);
+    const primaryState = mostMilesBy(filteredMyWorkouts, (r) => r.state_code);
+    const primaryCounty = mostMilesBy(filteredMyWorkouts, (r) => r.county_fips);
+    const primaryCity = mostMilesBy(filteredMyWorkouts, (r) => `${r.state_code}|${r.city}`);
 
     const individualRank = individuals.findIndex((i) => i.user_id === context.userId) + 1;
     const stateRank = states.findIndex((s) => s.code === primaryState) + 1;
@@ -172,7 +181,7 @@ export const getMyRankings = createServerFn({ method: "GET" })
     const cityRank = cities.findIndex((c) => `${c.state_code}|${c.name}` === primaryCity) + 1;
 
     const cityName = primaryCity?.split("|")[1] ?? null;
-    const countyName = myWorkouts.find((w) => w.county_fips === primaryCounty)?.county_name ?? null;
+    const countyName = filteredMyWorkouts.find((w) => w.county_fips === primaryCounty)?.county_name ?? null;
     const stateCode = primaryState;
 
     return {

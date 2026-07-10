@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SportFilter } from "@/components/sport-filter";
 import {
   listMyWorkouts,
   deleteWorkout,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
+import type { Sport } from "@/lib/public-workouts";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
@@ -33,6 +35,7 @@ function Portal() {
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
   const getRankings = useServerFn(getMyRankings);
+  const [sportFilter, setSportFilter] = useState<Sport[]>(["walk", "run", "bike"]);
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
@@ -45,8 +48,8 @@ function Portal() {
   });
 
   const { data: rankings } = useQuery({
-    queryKey: ["my-rankings"],
-    queryFn: () => getRankings(),
+    queryKey: ["my-rankings", sportFilter],
+    queryFn: () => getRankings({ data: { sports: sportFilter } }),
   });
 
   const [editingName, setEditingName] = useState(false);
@@ -206,10 +209,15 @@ function Portal() {
       </div>
 
       <div className="card mb-6">
-        <h2 className="text-xl font-bold">Your rankings</h2>
-        <p className="text-sm text-text-secondary">
-          Based on where you've logged the most miles.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold">Your rankings</h2>
+            <p className="text-sm text-text-secondary">
+              Based on where you've logged the most miles.
+            </p>
+          </div>
+          <SportFilter value={sportFilter} onChange={setSportFilter} />
+        </div>
         {rankings ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl bg-muted p-4">
