@@ -177,9 +177,7 @@ function Index() {
                 <h1 className="font-display font-bold leading-[0.98] tracking-tight text-[clamp(2.4rem,4vw,4.6rem)] break-words hyphens-auto">
                   Every mile
                   <br />
-                  your
-                  <br />
-                  state
+                  your state
                   <br />
                   climbs,
                   <br />
