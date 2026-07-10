@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { formatMiles } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
 import type { Sport } from "@/lib/public-workouts";
+import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
 type Rankings = {
   individualRank: number | null;
