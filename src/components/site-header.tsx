@@ -22,55 +22,60 @@ function useSession() {
 }
 
 function useTheme() {
-  const [dark, setDark] = useState<boolean>(false);
+  const [light, setLight] = useState<boolean>(false);
   const [ready, setReady] = useState(false);
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    const initial = saved
-      ? saved === "dark"
-      : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDark(initial);
+    setLight(saved === "light");
     setReady(true);
   }, []);
   useEffect(() => {
     if (!ready) return;
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark, ready]);
-  return { dark, ready, toggle: () => setDark((d) => !d) };
+    document.documentElement.classList.toggle("light", light);
+    localStorage.setItem("theme", light ? "light" : "dark");
+  }, [light, ready]);
+  return { light, ready, toggle: () => setLight((l) => !l) };
 }
 
 export function SiteHeader() {
   const signedIn = useSession();
-  const { dark, toggle } = useTheme();
+  const { light, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   const linkCls = (active: boolean) =>
-    `inline-flex items-center gap-2 min-h-11 px-3 rounded-md text-sm font-bold transition-colors ${
-      active ? "text-primary bg-muted" : "text-text-secondary hover:text-foreground hover:bg-muted"
+    `inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-semibold transition-all ${
+      active
+        ? "text-secondary bg-[rgba(94,234,255,0.10)] border border-[rgba(94,234,255,0.35)] shadow-[0_0_18px_rgba(94,234,255,0.25)]"
+        : "text-text-secondary border border-transparent hover:text-foreground hover:bg-white/[0.04]"
     }`;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 md:gap-4">
-        <Link to="/" className="flex items-center gap-2 pr-2 text-lg font-black tracking-tight">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <MapIcon size={18} strokeWidth={2} />
+    <header className="sticky top-0 z-30 border-b border-white/5 bg-[rgba(10,11,16,0.7)] backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-6 py-3">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 pr-3 font-display text-base font-bold tracking-tight"
+        >
+          <span
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-primary-foreground"
+            style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-glow-amber)" }}
+          >
+            <MapIcon size={16} strokeWidth={2.5} />
           </span>
           <span className="hidden sm:inline">US Miles Club</span>
         </Link>
 
-        <nav className="flex items-center gap-1 md:gap-2" aria-label="Primary">
+        <nav className="flex items-center gap-1" aria-label="Primary">
           <Link to="/" className={linkCls(path === "/")}>
-            <MapIcon size={18} strokeWidth={1.75} />
+            <MapIcon size={16} strokeWidth={2} />
             <span className="hidden sm:inline">Home Map</span>
           </Link>
           <Link to="/leaderboards" className={linkCls(path.startsWith("/leaderboards"))}>
-            <Trophy size={18} strokeWidth={1.75} />
+            <Trophy size={16} strokeWidth={2} />
             <span className="hidden sm:inline">Leaderboards</span>
           </Link>
           <Link to="/portal" className={linkCls(path.startsWith("/portal"))}>
-            <User size={18} strokeWidth={1.75} />
+            <User size={16} strokeWidth={2} />
             <span className="hidden sm:inline">My Portal</span>
           </Link>
         </nav>
@@ -80,10 +85,10 @@ export function SiteHeader() {
             type="button"
             onClick={toggle}
             className="btn btn-ghost"
-            aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-            style={{ minHeight: 44, minWidth: 44, padding: "0 0.75rem" }}
+            aria-label={light ? "Switch to dark theme" : "Switch to light theme"}
+            style={{ minHeight: 40, minWidth: 40, padding: "0 0.6rem", borderRadius: 999 }}
           >
-            {dark ? <Sun size={18} strokeWidth={1.75} /> : <Moon size={18} strokeWidth={1.75} />}
+            {light ? <Moon size={16} strokeWidth={2} /> : <Sun size={16} strokeWidth={2} />}
           </button>
           {signedIn === false && (
             <Link to="/auth" className="btn btn-cta">
@@ -91,8 +96,8 @@ export function SiteHeader() {
             </Link>
           )}
           {signedIn === true && (
-            <Link to="/log" className="btn btn-primary">
-              <Plus size={18} strokeWidth={2} />
+            <Link to="/log" className="btn btn-cta">
+              <Plus size={16} strokeWidth={2.5} />
               <span className="hidden sm:inline">Log workout</span>
             </Link>
           )}

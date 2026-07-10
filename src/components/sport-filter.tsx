@@ -17,7 +17,6 @@ export function SportFilter({
   const toggle = (s: Sport) => {
     const has = value.includes(s);
     const next = has ? value.filter((v) => v !== s) : [...value, s];
-    // Never allow zero-selected (would mean no data). Fall back to all three.
     onChange(next.length === 0 ? ["walk", "run", "bike"] : next);
   };
 
@@ -25,9 +24,9 @@ export function SportFilter({
     <div
       role="group"
       aria-label="Filter map and leaderboards by sport"
-      className="flex flex-wrap items-center gap-2"
+      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-[rgba(14,16,28,0.75)] p-1 backdrop-blur-lg"
+      style={{ boxShadow: "var(--shadow-panel)" }}
     >
-      <span className="text-sm font-bold text-text-secondary mr-1">Showing:</span>
       {OPTIONS.map(({ value: v, label, Icon }) => {
         const active = value.includes(v);
         return (
@@ -35,10 +34,12 @@ export function SportFilter({
             key={v}
             type="button"
             onClick={() => toggle(v)}
-            data-active={active}
             aria-pressed={active}
-            className="chip"
-            style={{ minHeight: 36 }}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold font-display transition-all ${
+              active
+                ? "bg-[rgba(94,234,255,0.14)] text-secondary shadow-[0_0_18px_rgba(94,234,255,0.35)]"
+                : "text-text-secondary hover:text-foreground"
+            }`}
           >
             <Icon size={16} strokeWidth={2} />
             {label}

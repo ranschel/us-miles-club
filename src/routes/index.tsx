@@ -23,15 +23,28 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "US Miles Club — collective mileage for your county" },
+      { title: "US Miles Club — live national mileage map" },
       {
         name: "description",
         content:
-          "Explore a live US map of walks, runs, and rides. Drill from state to county to city — no sign-in required.",
+          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
       },
     ],
   }),
 });
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="mono text-[0.68rem] uppercase tracking-[0.18em] text-text-secondary">
+        {label}
+      </div>
+      <div className="mt-1 font-display text-3xl font-bold tabular-nums text-foreground">
+        {value}
+      </div>
+    </div>
+  );
+}
 
 function Index() {
   const search = Route.useSearch();
@@ -75,7 +88,7 @@ function Index() {
     () =>
       [...byState.values()]
         .sort((a, b) => b.totalMiles - a.totalMiles)
-        .slice(0, 10)
+        .slice(0, 8)
         .map((s) => ({
           key: s.code,
           label: stateName(s.code),
@@ -113,109 +126,125 @@ function Index() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
-      {/* Hero */}
-      <section className="max-w-3xl">
-        <p className="chip mb-4" style={{ background: "var(--color-muted)" }}>
-          <MapPin size={14} strokeWidth={2} />
-          United States · live leaderboard
-        </p>
-        <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
-          Every mile your neighborhood moves,{" "}
-          <span className="text-primary">on the map</span>.
-        </h1>
-        <p className="mt-4 text-lg text-text-secondary max-w-xl">
-          Log a walk, run, or ride and watch your county climb the national board. No trackers,
-          no feeds — just neighbors moving together.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link to="/auth" className="btn btn-cta">
-            Join the Club
-          </Link>
-          <a href="#explore" className="btn btn-secondary">
-            Explore the map
-          </a>
-        </div>
-        <dl className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-text-secondary">Miles logged</dt>
-            <dd className="mono text-2xl font-bold">
-              {isLoading ? "…" : formatMiles(totalMiles)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-text-secondary">Active states</dt>
-            <dd className="mono text-2xl font-bold">{isLoading ? "…" : byState.size}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-text-secondary">Workouts</dt>
-            <dd className="mono text-2xl font-bold">{isLoading ? "…" : filtered.length}</dd>
-          </div>
-        </dl>
-      </section>
+    <div className="relative">
+      {/* Background flourish */}
+      <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
-
-      {/* Explore section */}
-      <section id="explore" className="mt-16 scroll-mt-20">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold">Explore the map</h2>
-            <p className="mt-1 text-text-secondary">
-              Pick a sport, click a state to drill in, then a county to see its cities.
-            </p>
-          </div>
-          <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
-        </div>
-
+      <div className="relative mx-auto max-w-[1600px] px-6 py-8">
+        {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="card p-3 md:p-4">
-              <NationalMap
-                byState={byState}
-                selected={null}
-                onSelect={(code) => setSearch({ state: code })}
-              />
-              <p className="mt-3 text-center text-xs text-text-secondary">
-                Darker states = more miles logged. Click a state to zoom in.
+          <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-start">
+            {/* LEFT */}
+            <div className="pt-6 lg:sticky lg:top-24">
+              <span className="chip">
+                <MapPin size={12} strokeWidth={2} />
+                United States · Live leaderboard
+              </span>
+              <h1 className="mt-5 font-display text-[2.6rem] md:text-[3.4rem] font-bold leading-[1.02] tracking-tight">
+                Every mile your
+                <br />
+                neighborhood moves,
+                <br />
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{ backgroundImage: "var(--gradient-primary)" }}
+                >
+                  on the map.
+                </span>
+              </h1>
+              <p className="mt-5 max-w-md text-[0.98rem] text-text-secondary">
+                Log a walk, run, or ride and watch your county climb the national board. No
+                trackers, no feeds — just neighbors moving together.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link to="/auth" className="btn btn-cta">
+                  Join the Club
+                </Link>
+                <a href="#explore" className="btn btn-secondary">
+                  Explore the map
+                </a>
+              </div>
+
+              <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
+                <Stat
+                  label="Miles logged"
+                  value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
+                />
+                <Stat label="Active states" value={isLoading ? "…" : String(byState.size)} />
+                <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
+              </div>
+              <div className="stat-divider mt-6 max-w-md" />
+              <p className="mono mt-3 text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-md">
+                Updated in real time · miles + logs
               </p>
             </div>
-            <LeaderboardList
-              title="Top states"
-              items={topStates}
-              loading={isLoading}
-              emptyLabel="No miles logged yet."
-            />
-          </div>
+
+            {/* RIGHT — map surface */}
+            <div id="explore" className="relative">
+              <div className="glass relative overflow-hidden p-4 md:p-5">
+                {/* Sport filter — floating on the map */}
+                <div className="absolute left-1/2 top-6 z-10 -translate-x-1/2">
+                  <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
+                </div>
+
+                <div className="pt-4">
+                  <NationalMap
+                    byState={byState}
+                    selected={null}
+                    onSelect={(code) => setSearch({ state: code })}
+                  />
+                </div>
+
+                {/* Leaderboard overlay — bottom right of map */}
+                <div className="mt-4 lg:mt-0 lg:absolute lg:bottom-6 lg:right-6 lg:w-[340px]">
+                  <LeaderboardList
+                    title="Top states"
+                    items={topStates.slice(0, 5)}
+                    loading={isLoading}
+                    emptyLabel="No miles logged yet."
+                  />
+                </div>
+              </div>
+
+              <p className="mt-3 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+                Brighter states = more miles logged · click to zoom
+              </p>
+            </div>
+          </section>
         ) : (
-          <div>
-            <div className="mb-4 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setSearch({ state: null, county: null })}
-                className="btn btn-ghost"
-              >
-                <ArrowLeft size={16} strokeWidth={2} /> Back to national map
-              </button>
-              <h3 className="text-2xl font-bold">{stateName(stateCode)}</h3>
-              <span className="chip">
-                <Trophy size={14} strokeWidth={2} />
-                {formatMiles(
-                  [...byCounty.values()]
-                    .filter((c) => c.state_code === stateCode)
-                    .reduce((s, c) => s + c.totalMiles, 0),
-                )}
-              </span>
+          <section>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSearch({ state: null, county: null })}
+                  className="btn btn-ghost"
+                >
+                  <ArrowLeft size={16} strokeWidth={2} /> National map
+                </button>
+                <h3 className="font-display text-2xl font-bold">{stateName(stateCode)}</h3>
+                <span className="chip">
+                  <Trophy size={12} strokeWidth={2} />
+                  {formatMiles(
+                    [...byCounty.values()]
+                      .filter((c) => c.state_code === stateCode)
+                      .reduce((s, c) => s + c.totalMiles, 0),
+                  )}
+                </span>
+              </div>
+              <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-              <div className="card p-3 md:p-4">
+              <div className="glass p-4 md:p-5">
                 <CountyMap
                   stateCode={stateCode}
                   byCounty={byCounty}
                   selectedFips={countyFips}
                   onSelect={(fips) => setSearch({ county: fips })}
                 />
-                <p className="mt-3 text-center text-xs text-text-secondary">
+                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
                   {countyFips
                     ? "Click the same county again to close its city list."
                     : "Click a county to reveal its active cities."}
@@ -224,14 +253,14 @@ function Index() {
 
               <div className="space-y-6">
                 <LeaderboardList
-                  title={`Top counties in ${stateName(stateCode)}`}
+                  title={`Top counties · ${stateName(stateCode)}`}
                   items={topCountiesInState}
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
                 />
 
                 {selectedCounty && (
-                  <div className="card">
+                  <div className="glass">
                     <CityList
                       countyName={selectedCounty.name}
                       cities={cities}
@@ -241,9 +270,9 @@ function Index() {
                 )}
               </div>
             </div>
-          </div>
+          </section>
         )}
-      </section>
+      </div>
     </div>
   );
 }
