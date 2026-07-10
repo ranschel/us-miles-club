@@ -46,9 +46,28 @@ function Portal() {
   const getProfile = useServerFn(getMyProfile);
   const saveProfile = useServerFn(updateMyProfile);
   const getRankings = useServerFn(getMyRankings);
+  const ensureCode = useServerFn(ensureRecoveryCode);
   const [sportFilter, setSportFilter] = useState<Sport[]>(["walk", "run", "bike"]);
 
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [confirmedSaved, setConfirmedSaved] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    ensureCode()
+      .then((res) => {
+        if (!cancelled && res?.code) setRecoveryCode(res.code);
+      })
+      .catch(() => {
+        /* non-blocking */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ensureCode]);
+
 
   const { data = [], isLoading, error } = useQuery({
     queryKey: ["my-workouts"],
