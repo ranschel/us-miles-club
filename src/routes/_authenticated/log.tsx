@@ -1,18 +1,22 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 import { feature } from "topojson-client";
 import countiesTopoRaw from "us-atlas/counties-10m.json";
 import type { FeatureCollection, Geometry } from "geojson";
 import { Footprints, Bike, PersonStanding, ArrowLeft } from "lucide-react";
 
-import { createWorkout } from "@/lib/workouts.functions";
+import { createWorkout, updateWorkout, getWorkout } from "@/lib/workouts.functions";
 import { STATES, stateFipsFromCode } from "@/lib/us-geo";
 import { fromDateTimeLocal, kmFromMiles, toDateTimeLocal } from "@/lib/format";
 
+const SearchSchema = z.object({ id: z.string().uuid().optional() });
+
 export const Route = createFileRoute("/_authenticated/log")({
+  validateSearch: (s) => SearchSchema.parse(s),
   component: LogWorkout,
   head: () => ({ meta: [{ title: "Log workout — US Miles Club" }] }),
 });
@@ -75,30 +79,54 @@ function defaultDraft(): Draft {
 }
 
 function LogWorkout() {
+  const { id: editId } = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const create = useServerFn(createWorkout);
+  const update = useServerFn(updateWorkout);
+  const fetchOne = useServerFn(getWorkout);
+  const isEdit = !!editId;
 
   const [d, setD] = useState<Draft>(defaultDraft);
   const [errors, setErrors] = useState<Partial<Record<keyof Draft, string>>>({});
 
-  // Restore draft after mount (localStorage is client-only)
-  useEffect(() => {
-    setD(loadDraft());
-  }, []);
+  // Load existing workout when editing; otherwise restore draft
+  const { data: existing, isLoading: loadingExisting } = useQuery({
+    queryKey: ["workout", editId],
+    queryFn: () => fetchOne({ data: { id: editId! } }),
+    enabled: isEdit,
+  });
 
-  // Persist draft on change (debounce is handled below on blur only)
   useEffect(() => {
+    if (isEdit) {
+      if (existing) {
+        setD({
+          sport: existing.sport,
+          distance: String(existing.distance_miles),
+          unit: "mi",
+          state: existing.state_code,
+          county: existing.county_fips,
+          city: existing.city,
+          performed_at: toDateTimeLocal(new Date(existing.performed_at)),
+        });
+      }
+    } else {
+      setD(loadDraft());
+    }
+  }, [isEdit, existing]);
+
+  // Persist draft (only when creating)
+  useEffect(() => {
+    if (isEdit) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
     } catch {
       /* ignore */
     }
-  }, [d]);
+  }, [d, isEdit]);
 
   const counties = useMemo(() => countiesForState(d.state), [d.state]);
 
-  // Autofill / reset county when state changes if selection is now invalid
   useEffect(() => {
     if (!d.county || !counties.some((c) => c.fips === d.county)) {
       setD((prev) => ({ ...prev, county: counties[0]?.fips ?? "" }));
@@ -137,26 +165,36 @@ function LogWorkout() {
     mutationFn: async () => {
       const county = counties.find((c) => c.fips === d.county)!;
       const performed = fromDateTimeLocal(d.performed_at);
-      return create({
-        data: {
-          sport: d.sport,
-          distance_miles: Number(distanceMiles.toFixed(2)),
-          state_code: d.state,
-          county_fips: d.county,
-          county_name: county.name,
-          city: d.city.trim().replace(/\s+/g, " ").slice(0, 80),
-          performed_at: performed.toISOString(),
-        },
-      });
+      const payload = {
+        sport: d.sport,
+        distance_miles: Number(distanceMiles.toFixed(2)),
+        state_code: d.state,
+        county_fips: d.county,
+        county_name: county.name,
+        city: d.city.trim().replace(/\s+/g, " ").slice(0, 80),
+        performed_at: performed.toISOString(),
+      };
+      if (isEdit) {
+        return update({ data: { id: editId!, ...payload } });
+      }
+      return create({ data: payload });
     },
     onSuccess: () => {
-      toast.success("Workout saved · pushing your county up the board.");
-      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+      toast.success(
+        isEdit
+          ? "Workout updated."
+          : "Workout saved · pushing your county up the board.",
+      );
+      if (!isEdit) {
+        try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+      }
       qc.invalidateQueries({ queryKey: ["my-workouts"] });
       qc.invalidateQueries({ queryKey: ["public-workouts"] });
+      if (isEdit) qc.invalidateQueries({ queryKey: ["workout", editId] });
       navigate({ to: "/portal" });
     },
-    onError: (e: Error) => toast.error(`Couldn't save: ${e.message}`),
+    onError: (e: Error) =>
+      toast.error(`Couldn't ${isEdit ? "update" : "save"}: ${e.message}`),
   });
 
   const sports: { v: Sport; label: string; Icon: typeof Footprints }[] = [
@@ -167,6 +205,14 @@ function LogWorkout() {
 
   const onBlurValidate = () => validate();
 
+  if (isEdit && loadingExisting) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-12">
+        <div className="skeleton h-96" />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-xl px-4 py-8 md:py-12">
       <Link to="/portal" className="btn btn-ghost mb-4 -ml-3">
@@ -174,9 +220,11 @@ function LogWorkout() {
       </Link>
 
       <div className="card">
-        <h1 className="text-3xl font-black">Log a workout</h1>
+        <h1 className="text-3xl font-black">{isEdit ? "Edit workout" : "Log a workout"}</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Every mile counts toward your county. Values save as you go.
+          {isEdit
+            ? "Correct anything that got logged wrong."
+            : "Every mile counts toward your county. Values save as you go."}
         </p>
 
         <form
@@ -372,7 +420,9 @@ function LogWorkout() {
               className="btn btn-primary flex-1"
               disabled={mut.isPending}
             >
-              {mut.isPending ? "Saving…" : "Save this workout"}
+              {mut.isPending
+                ? (isEdit ? "Updating…" : "Saving…")
+                : (isEdit ? "Save changes" : "Save this workout")}
             </button>
             <Link to="/portal" className="btn btn-ghost">
               Cancel
