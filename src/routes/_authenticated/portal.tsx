@@ -26,6 +26,8 @@ import {
 } from "@/lib/workouts.functions";
 import { formatMiles, formatDateTime, sportLabel } from "@/lib/format";
 import { stateName } from "@/lib/us-geo";
+import { WorkoutChart } from "@/components/workout-chart";
+import { BadgesPanel } from "@/components/badges-panel";
 import type { Sport } from "@/lib/public-workouts";
 
 export const Route = createFileRoute("/_authenticated/portal")({
