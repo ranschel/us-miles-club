@@ -133,9 +133,10 @@ function Index() {
       <div className="relative w-full px-6 py-8 lg:px-10">
         {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
         {!stateCode ? (
-          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-center lg:min-h-[calc(100vh-5rem)]">
+          <section className="grid gap-8 lg:grid-cols-[minmax(340px,34%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
             {/* LEFT */}
-            <div className="pt-2">
+            <div className="flex flex-col justify-center pt-2">
+
 
               <span className="chip">
                 <MapPin size={12} strokeWidth={2} />
@@ -182,20 +183,21 @@ function Index() {
             </div>
 
             {/* RIGHT — map surface */}
-            <div id="explore" className="relative">
-              <div className="glass relative overflow-hidden p-4 md:p-5">
+            <div id="explore" className="relative flex flex-col">
+              <div className="glass relative flex-1 overflow-hidden p-4 md:p-5 flex flex-col">
                 {/* Sport filter — floating on the map */}
                 <div className="absolute left-1/2 top-6 z-10 -translate-x-1/2">
                   <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
                 </div>
 
-                <div className="pt-4 flex items-center justify-center min-h-[70vh] lg:min-h-[calc(100vh-9rem)]">
+                <div className="flex-1 flex items-center justify-center pt-4">
                   <NationalMap
                     byState={byState}
                     selected={null}
                     onSelect={(code) => setSearch({ state: code })}
                   />
                 </div>
+
 
 
                 {/* Leaderboard overlay — bottom right of map */}
