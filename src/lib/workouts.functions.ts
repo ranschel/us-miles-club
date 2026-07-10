@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { aggregate, aggregateCities, aggregateIndividuals, mostMilesBy } from "@/lib/aggregate";
+import type { WorkoutRow } from "@/lib/public-workouts";
 
 const WorkoutFields = z.object({
   sport: z.enum(["walk", "run", "bike"]),
