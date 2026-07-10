@@ -39,7 +39,10 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="mono whitespace-nowrap text-[0.65rem] uppercase tracking-[0.14em] text-text-secondary">
         {label}
       </div>
-      <div className="mt-1 font-display text-4xl font-black leading-[0.95] tracking-tight tabular-nums text-foreground">
+      <div
+        className="mt-1 font-display text-3xl font-black leading-[0.95] tracking-tight tabular-nums bg-clip-text text-transparent"
+        style={{ backgroundImage: "var(--gradient-primary)" }}
+      >
         {value}
       </div>
     </div>
