@@ -136,7 +136,7 @@ function LogWorkout() {
   const distanceMiles = useMemo(() => {
     const n = parseFloat(d.distance);
     if (!Number.isFinite(n) || n <= 0) return NaN;
-    return d.unit === "mi" ? n : kmFromMiles(n);
+    return d.unit === "mi" ? n : milesFromKm(n);
   }, [d.distance, d.unit]);
 
   const validate = (): boolean => {
