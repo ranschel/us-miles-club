@@ -287,7 +287,7 @@ function Portal() {
         </div>
       </div>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card">
           <div className="text-xs uppercase tracking-wide text-text-secondary">Total miles</div>
           <div className="mono text-3xl font-bold mt-1">{formatMiles(total)}</div>
@@ -302,7 +302,12 @@ function Portal() {
             {data[0] ? formatDateTime(data[0].performed_at) : "—"}
           </div>
         </div>
+        <MonthlyGoal
+          workouts={data}
+          currentGoal={profile?.monthly_goal_miles ?? null}
+        />
       </div>
+
 
       <BadgesPanel workouts={data} />
 
