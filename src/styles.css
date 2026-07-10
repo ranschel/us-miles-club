@@ -125,28 +125,53 @@
   --surface: rgba(255, 255, 255, 0.85);
   --border: rgba(0, 0, 0, 0.10);
   --border-strong: rgba(0, 0, 0, 0.18);
-  --foreground: #2D2F3A;
-  --text-secondary: #5E6278;
-  --text-muted: #8B8FA3;
+  --foreground: #1A1C24;
+  --text-secondary: #3F4256;
+  --text-muted: #5E6278;
   --muted: rgba(0, 0, 0, 0.05);
   --primary-foreground: #FFFFFF;
   --cta-foreground: #FFFFFF;
 
+  /* Darker teal so cyan text/chips/buttons are readable on light bg */
+  --secondary: #0B7A8C;
+  --secondary-foreground: #FFFFFF;
+  --info: #0B7A8C;
+
   --map-stroke: rgba(45, 47, 58, 0.35);
-  --map-stroke-selected: rgba(0, 160, 180, 0.85);
+  --map-stroke-selected: rgba(11, 122, 140, 0.85);
+  --map-hover: #0B7A8C;
 }
 
 .light .glass,
 .light .card {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 0, 0, 0.12);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .light .glass-strong {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.16);
 }
+
+.light .btn-secondary {
+  background: rgba(11, 122, 140, 0.10);
+  color: var(--secondary);
+  border-color: rgba(11, 122, 140, 0.45);
+}
+
+.light .chip[data-active="true"] {
+  background: rgba(11, 122, 140, 0.14);
+  color: var(--secondary);
+  border-color: rgba(11, 122, 140, 0.55);
+  box-shadow: 0 0 12px rgba(11, 122, 140, 0.20);
+}
+
+.light .field-input {
+  background-color: #FFFFFF;
+  color: var(--foreground);
+}
+
 
 @layer base {
   * {
