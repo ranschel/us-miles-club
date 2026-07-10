@@ -179,7 +179,7 @@ function LogWorkout() {
       }
       return create({ data: payload });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success(
         isEdit
           ? "Workout updated."
@@ -188,9 +188,12 @@ function LogWorkout() {
       if (!isEdit) {
         try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       }
-      qc.invalidateQueries({ queryKey: ["my-workouts"] });
-      qc.invalidateQueries({ queryKey: ["public-workouts"] });
-      qc.invalidateQueries({ queryKey: ["my-rankings"] });
+      // Force refetch so the portal shows fresh totals immediately on arrival.
+      await Promise.all([
+        qc.refetchQueries({ queryKey: ["my-workouts"] }),
+        qc.refetchQueries({ queryKey: ["public-workouts"] }),
+        qc.refetchQueries({ queryKey: ["my-rankings"] }),
+      ]);
       if (isEdit) qc.invalidateQueries({ queryKey: ["workout", editId] });
       navigate({ to: "/portal" });
     },

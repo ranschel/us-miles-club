@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft, MapPin, Trophy } from "lucide-react";
 
@@ -11,6 +11,7 @@ import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
+import { supabase } from "@/integrations/supabase/client";
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
@@ -60,6 +61,21 @@ function Index() {
   const sports: Sport[] = search.sports ?? ["walk", "run", "bike"];
   const stateCode = search.state ?? null;
   const countyFips = search.county ?? null;
+
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setSignedIn(!!data.session);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (mounted) setSignedIn(!!session);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   const setSearch = (
     patch: Partial<{ sports: Sport[]; state: string | null; county: string | null }>,
@@ -166,9 +182,15 @@ function Index() {
                   trackers, no feeds — just neighbors moving together.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Link to="/auth" className="btn btn-cta">
-                    Join the Club
-                  </Link>
+                  {signedIn ? (
+                    <Link to="/portal" className="btn btn-cta">
+                      Go to my portal
+                    </Link>
+                  ) : (
+                    <Link to="/auth" className="btn btn-cta">
+                      Join the Club
+                    </Link>
+                  )}
                 </div>
               </div>
 
