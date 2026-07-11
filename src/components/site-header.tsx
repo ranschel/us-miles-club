@@ -80,7 +80,7 @@ export function SiteHeader() {
           </button>
           {signedIn === false && (
             <Link to="/auth" className="btn btn-cta text-sm px-4 sm:text-base sm:px-[1.15rem]">
-              Join the Club
+              Access the Club
             </Link>
           )}
           {signedIn === true && (
