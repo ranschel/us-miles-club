@@ -70,7 +70,7 @@ function Auth() {
           <Mail size={20} strokeWidth={2} />
           <span className="text-sm font-bold uppercase tracking-wide">Magic link sign-in</span>
         </div>
-        <h1 className="text-3xl font-black">Join the Club</h1>
+        <h1 className="text-3xl font-black">Access the Club</h1>
         <p className="mt-2 text-text-secondary">
           We'll email you a one-tap sign-in link. No passwords, no hassle. Your browser stays
           signed in until you sign out.
