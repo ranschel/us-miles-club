@@ -63,7 +63,7 @@ function About() {
       <h2 className="mt-10 text-2xl font-black tracking-tight">How it works</h2>
       <ol className="mt-4 space-y-3 text-text-secondary">
         <li>
-          <span className="font-bold text-foreground">1. Join the Club.</span>{" "}
+          <span className="font-bold text-foreground">1. Access the Club.</span>{" "}
           A quick sign-up. Add your name so your miles show up on the boards.
         </li>
         <li>
