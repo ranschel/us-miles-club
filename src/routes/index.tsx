@@ -199,7 +199,7 @@ function Index() {
                     </Link>
                   ) : (
                     <Link to="/auth" className="btn btn-cta">
-                      Join the Club
+                      Access the Club
                     </Link>
                   )}
                 </div>
