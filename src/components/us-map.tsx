@@ -7,6 +7,7 @@ import countiesTopoRaw from "us-atlas/counties-10m.json";
 import { STATE_BY_FIPS, stateCodeFromFips, stateFipsFromCode } from "@/lib/us-geo";
 import { useHeatLevel, type StateAgg, type CountyAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 // us-atlas ships TopoJSON; feature() only needs .objects[key], not full typing.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,10 +26,10 @@ const stateFeatures: Feat[] = (
 
 const countyFeaturesByState = new Map<string, Feat[]>();
 {
-  const all = feature(
-    countiesTopo,
-    countiesTopo.objects.counties,
-  ) as unknown as FeatureCollection<Geometry, { name: string }>;
+  const all = feature(countiesTopo, countiesTopo.objects.counties) as unknown as FeatureCollection<
+    Geometry,
+    { name: string }
+  >;
   for (const f of all.features) {
     const fips = String(f.id).padStart(5, "0");
     const stateFips = fips.slice(0, 2);
@@ -58,52 +59,61 @@ export function NationalMap({
   const level = useHeatLevel(maxMiles);
 
   return (
-    <svg
-      viewBox="0 0 975 610"
-      preserveAspectRatio="xMidYMid meet"
-      role="img"
-      aria-label="Interactive US map. Click a state to explore its counties."
-      className="w-full h-auto"
-    >
-      <g>
-        {stateFeatures.map((f) => {
-          const fips = String(f.id).padStart(2, "0");
-          const info = STATE_BY_FIPS[fips];
-          const code = info?.code;
-          const agg = code ? byState.get(code) : undefined;
-          const miles = agg?.totalMiles ?? 0;
-          const lvl = level(miles);
-          const d = usaPath(f) ?? "";
-          const isSelected = selected != null && selected === code;
-          const tooltip = info
-            ? agg
-              ? `${info.name} — ${formatMiles(miles)} across ${agg.count} workouts. Click to drill in.`
-              : `${info.name} — no miles logged yet. Click to zoom.`
-            : "Unknown region";
-          return (
-            <path
-              key={fips}
-              d={d}
-              className="map-region"
-              data-level={lvl}
-              data-selected={isSelected}
-              tabIndex={0}
-              role="button"
-              aria-label={tooltip}
-              onClick={() => code && onSelect(code === selected ? null : code)}
-              onKeyDown={(e) => {
-                if ((e.key === "Enter" || e.key === " ") && code) {
-                  e.preventDefault();
-                  onSelect(code === selected ? null : code);
-                }
-              }}
-            >
-              <title>{tooltip}</title>
-            </path>
-          );
-        })}
-      </g>
-    </svg>
+    <TooltipProvider>
+      <svg
+        viewBox="0 0 975 610"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Interactive US map. Click a state to explore its counties and leaderboard."
+        className="w-full h-auto"
+      >
+        <g>
+          {stateFeatures.map((f) => {
+            const fips = String(f.id).padStart(2, "0");
+            const info = STATE_BY_FIPS[fips];
+            const code = info?.code;
+            const agg = code ? byState.get(code) : undefined;
+            const miles = agg?.totalMiles ?? 0;
+            const lvl = level(miles);
+            const d = usaPath(f) ?? "";
+            const isSelected = selected != null && selected === code;
+            const label = info ? info.name : "Unknown region";
+            const stats = agg
+              ? `${formatMiles(miles)} across ${agg.count} workouts`
+              : "no miles logged yet";
+            const hint = code
+              ? `Click to see ${label}'s county map, top counties, and city rankings.`
+              : "";
+            const tooltip = `${label} — ${stats}.${hint ? ` ${hint}` : ""}`;
+            return (
+              <Tooltip key={fips}>
+                <TooltipTrigger asChild>
+                  <path
+                    d={d}
+                    className="map-region"
+                    data-level={lvl}
+                    data-selected={isSelected}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={tooltip}
+                    onClick={() => code && onSelect(code === selected ? null : code)}
+                    onKeyDown={(e) => {
+                      if ((e.key === "Enter" || e.key === " ") && code) {
+                        e.preventDefault();
+                        onSelect(code === selected ? null : code);
+                      }
+                    }}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" align="center" className="max-w-[16rem] text-center">
+                  {tooltip}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </g>
+      </svg>
+    </TooltipProvider>
   );
 }
 
@@ -143,48 +153,56 @@ export function CountyMap({
   if (!stateFeature) return null;
 
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="xMidYMid meet"
-      role="img"
-      aria-label={`County map for ${STATE_BY_FIPS[stateFips!]?.name}. Click a county to see its active cities.`}
-      className="w-full h-auto"
-    >
-      <g>
-        {features.map((f) => {
-          const fips = String(f.id).padStart(5, "0");
-          const agg = byCounty.get(fips);
-          const miles = agg?.totalMiles ?? 0;
-          const lvl = level(miles);
-          const isSelected = selectedFips === fips;
-          const name = (f.properties as GeoJsonProperties & { name?: string })?.name ?? "County";
-          const tooltip = agg
-            ? `${name} County — ${formatMiles(miles)} across ${agg.count} workouts.`
-            : `${name} County — no miles logged yet.`;
-          return (
-            <path
-              key={fips}
-              d={path(f) ?? ""}
-              className="map-region"
-              data-level={lvl}
-              data-selected={isSelected}
-              tabIndex={0}
-              role="button"
-              aria-label={tooltip}
-              onClick={() => onSelect(fips === selectedFips ? null : fips)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onSelect(fips === selectedFips ? null : fips);
-                }
-              }}
-            >
-              <title>{tooltip}</title>
-            </path>
-          );
-        })}
-      </g>
-    </svg>
+    <TooltipProvider>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={`County map for ${STATE_BY_FIPS[stateFips!]?.name}. Click a county to see its active cities and local leaderboard.`}
+        className="w-full h-auto"
+      >
+        <g>
+          {features.map((f) => {
+            const fips = String(f.id).padStart(5, "0");
+            const agg = byCounty.get(fips);
+            const miles = agg?.totalMiles ?? 0;
+            const lvl = level(miles);
+            const isSelected = selectedFips === fips;
+            const name = (f.properties as GeoJsonProperties & { name?: string })?.name ?? "County";
+            const stats = agg
+              ? `${formatMiles(miles)} across ${agg.count} workouts`
+              : "no miles logged yet";
+            const hint = `Click to see ${name} County's active cities and local leaderboard.`;
+            const tooltip = `${name} County — ${stats}. ${hint}`;
+            return (
+              <Tooltip key={fips}>
+                <TooltipTrigger asChild>
+                  <path
+                    d={path(f) ?? ""}
+                    className="map-region"
+                    data-level={lvl}
+                    data-selected={isSelected}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={tooltip}
+                    onClick={() => onSelect(fips === selectedFips ? null : fips)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onSelect(fips === selectedFips ? null : fips);
+                      }
+                    }}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" align="center" className="max-w-[16rem] text-center">
+                  {tooltip}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </g>
+      </svg>
+    </TooltipProvider>
   );
 }
 
