@@ -242,16 +242,6 @@ function Index() {
 
 
 
-                {/* Leaderboard overlay — bottom right of map */}
-                <div className="mt-4 lg:mt-0 lg:absolute lg:bottom-6 lg:right-6 lg:w-[340px]">
-                  <LeaderboardList
-                    title="Top states"
-                    items={topStates.slice(0, 5)}
-                    loading={isLoading}
-                    emptyLabel="No miles logged yet."
-                    onSelect={(key) => setSearch({ state: key })}
-                  />
-                </div>
               </div>
 
               <p className="mt-3 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
