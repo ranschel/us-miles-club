@@ -167,7 +167,7 @@ function Index() {
       <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
       <div className="relative w-full px-4 py-6 sm:px-6 md:py-8 lg:px-10">
-        {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
+        {/* Top layout — Top: top states · Left: hero + stats · Right: map */}
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
 
