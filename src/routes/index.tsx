@@ -317,6 +317,7 @@ function Index() {
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
                   onSelect={(key) => setSearch({ county: key })}
+                  clickHint={(it) => `Click to see ${it.label}'s active cities and local leaderboard.`}
                 />
               </div>
             </div>
