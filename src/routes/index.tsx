@@ -171,6 +171,18 @@ function Index() {
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
 
+            {/* Top states — below the site header, not over the map */}
+            <div className="col-span-full">
+              <LeaderboardList
+                title="Top states"
+                items={topStates.slice(0, 5)}
+                loading={isLoading}
+                emptyLabel="No miles logged yet."
+                onSelect={(key) => setSearch({ state: key })}
+                clickHint={(it) => `Click to see ${it.label}'s county map and leaderboard.`}
+              />
+            </div>
+
             {/* LEFT */}
             <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
               <div className="min-w-0">
