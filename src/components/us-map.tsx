@@ -7,12 +7,7 @@ import countiesTopoRaw from "us-atlas/counties-10m.json";
 import { STATE_BY_FIPS, stateCodeFromFips, stateFipsFromCode } from "@/lib/us-geo";
 import { useHeatLevel, type StateAgg, type CountyAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 // us-atlas ships TopoJSON; feature() only needs .objects[key], not full typing.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,10 +26,10 @@ const stateFeatures: Feat[] = (
 
 const countyFeaturesByState = new Map<string, Feat[]>();
 {
-  const all = feature(
-    countiesTopo,
-    countiesTopo.objects.counties,
-  ) as unknown as FeatureCollection<Geometry, { name: string }>;
+  const all = feature(countiesTopo, countiesTopo.objects.counties) as unknown as FeatureCollection<
+    Geometry,
+    { name: string }
+  >;
   for (const f of all.features) {
     const fips = String(f.id).padStart(5, "0");
     const stateFips = fips.slice(0, 2);
