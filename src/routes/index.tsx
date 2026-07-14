@@ -45,7 +45,6 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="relative min-w-0 overflow-visible pr-1">
@@ -167,9 +166,20 @@ function Index() {
       <div className="pointer-events-none absolute inset-0 grid-noise opacity-40" aria-hidden />
 
       <div className="relative w-full px-4 py-6 sm:px-6 md:py-8 lg:px-10">
-        {/* Top layout — Left: hero + stats · Right: map + overlay leaderboard */}
+        {/* Top layout — Top: top states · Left: hero + stats · Right: map */}
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
+            {/* Top states — below the site header, not over the map */}
+            <div className="col-span-full">
+              <LeaderboardList
+                title="Top states"
+                items={topStates.slice(0, 5)}
+                loading={isLoading}
+                emptyLabel="No miles logged yet."
+                onSelect={(key) => setSearch({ state: key })}
+                clickHint={(it) => `Click to see ${it.label}'s county map and leaderboard.`}
+              />
+            </div>
 
             {/* LEFT */}
             <div className="flex min-w-0 flex-col justify-between py-4 lg:py-8">
@@ -205,7 +215,6 @@ function Index() {
                 </div>
               </div>
 
-
               <div className="mt-8 lg:mt-0">
                 <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-lg">
                   <Stat
@@ -220,9 +229,7 @@ function Index() {
                   Updated in real time · miles + logs
                 </p>
               </div>
-
             </div>
-
 
             {/* RIGHT — map surface */}
             <div id="explore" className="relative flex flex-col">
@@ -237,19 +244,6 @@ function Index() {
                     byState={byState}
                     selected={null}
                     onSelect={(code) => setSearch({ state: code })}
-                  />
-                </div>
-
-
-
-                {/* Leaderboard overlay — bottom right of map */}
-                <div className="mt-4 lg:mt-0 lg:absolute lg:bottom-6 lg:right-6 lg:w-[340px]">
-                  <LeaderboardList
-                    title="Top states"
-                    items={topStates.slice(0, 5)}
-                    loading={isLoading}
-                    emptyLabel="No miles logged yet."
-                    onSelect={(key) => setSearch({ state: key })}
                   />
                 </div>
               </div>
@@ -315,6 +309,9 @@ function Index() {
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
                   onSelect={(key) => setSearch({ county: key })}
+                  clickHint={(it) =>
+                    `Click to see ${it.label}'s active cities and local leaderboard.`
+                  }
                 />
               </div>
             </div>

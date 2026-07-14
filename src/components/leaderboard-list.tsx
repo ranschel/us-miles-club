@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import type { CityAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 export function CityList({
   countyName,
@@ -48,9 +49,7 @@ export function CityList({
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-text-secondary">
-          No matching cities. Try clearing the search.
-        </p>
+        <p className="text-sm text-text-secondary">No matching cities. Try clearing the search.</p>
       ) : (
         <ol className="rounded-lg border border-white/10 overflow-hidden">
           {filtered.map((c, i) => (
@@ -82,6 +81,7 @@ export function LeaderboardList({
   loading,
   emptyLabel = "Nothing here yet.",
   onSelect,
+  clickHint,
   searchable = false,
   searchPlaceholder = "Search",
   topN = 20,
@@ -91,6 +91,7 @@ export function LeaderboardList({
   loading?: boolean;
   emptyLabel?: string;
   onSelect?: (key: string) => void;
+  clickHint?: (item: { key: string; label: string; sub?: string }) => string;
   searchable?: boolean;
   searchPlaceholder?: string;
   topN?: number;
@@ -100,102 +101,117 @@ export function LeaderboardList({
   const filtered = query
     ? items.filter(
         (it) =>
-          it.label.toLowerCase().includes(query) ||
-          (it.sub ?? "").toLowerCase().includes(query),
+          it.label.toLowerCase().includes(query) || (it.sub ?? "").toLowerCase().includes(query),
       )
     : items.slice(0, topN);
 
+  const defaultHint = (it: { label: string }) => `Click to view ${it.label}.`;
+
   return (
-    <div className="glass-strong p-5">
-      <div className="mb-3 flex items-baseline justify-between">
-        <h3 className="font-display text-lg font-bold leading-[0.98] tracking-tight">{title}</h3>
-        <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
-          Total miles
-        </span>
-      </div>
-      {searchable && (
-        <label className="relative mb-3 block">
-          <span className="sr-only">{searchPlaceholder}</span>
-          <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
-            aria-hidden
-          />
-          <input
-            type="search"
-            className="field-input pl-8 text-sm"
-            placeholder={searchPlaceholder}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-        </label>
-      )}
-      {loading ? (
-        <div className="space-y-2">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton h-12" />
-          ))}
+    <TooltipProvider>
+      <div className="glass-strong p-5">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h3 className="font-display text-lg font-bold leading-[0.98] tracking-tight">{title}</h3>
+          <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
+            Total miles
+          </span>
         </div>
-      ) : filtered.length === 0 ? (
-        <p className="text-sm text-text-secondary">
-          {query ? "No matches. Try a different search." : emptyLabel}
-        </p>
-      ) : (
-        <ol className="space-y-1">
-          {filtered.map((it, i) => {
-            const rank = query ? items.indexOf(it) + 1 : i + 1;
-            const clickable = !!onSelect;
-            const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-              clickable
-                ? "hover:bg-[rgba(94,234,255,0.08)] hover:ring-1 hover:ring-[rgba(94,234,255,0.35)] cursor-pointer"
-                : "hover:bg-white/[0.04]"
-            } ${i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
-            const content = (
-              <>
-                <span className="mono w-8 text-xs font-semibold text-secondary">
-                  {String(rank).padStart(2, "0")}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className="font-display font-bold tracking-tight truncate"
-                    title={it.label}
-                  >
-                    {it.label}
-                  </div>
-                  {it.sub && (
+        {searchable && (
+          <label className="relative mb-3 block">
+            <span className="sr-only">{searchPlaceholder}</span>
+            <Search
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
+              aria-hidden
+            />
+            <input
+              type="search"
+              className="field-input pl-8 text-sm"
+              placeholder={searchPlaceholder}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </label>
+        )}
+        {loading ? (
+          <div className="space-y-2">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="skeleton h-12" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <p className="text-sm text-text-secondary">
+            {query ? "No matches. Try a different search." : emptyLabel}
+          </p>
+        ) : (
+          <ol className="space-y-1">
+            {filtered.map((it, i) => {
+              const rank = query ? items.indexOf(it) + 1 : i + 1;
+              const clickable = !!onSelect;
+              const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
+                clickable
+                  ? "hover:bg-[rgba(94,234,255,0.08)] hover:ring-1 hover:ring-[rgba(94,234,255,0.35)] cursor-pointer"
+                  : "hover:bg-white/[0.04]"
+              } ${i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
+              const content = (
+                <>
+                  <span className="mono w-8 text-xs font-semibold text-secondary">
+                    {String(rank).padStart(2, "0")}
+                  </span>
+                  <div className="flex-1 min-w-0">
                     <div
-                      className="text-xs text-text-secondary truncate"
-                      title={it.sub}
+                      className="font-display font-bold tracking-tight truncate"
+                      title={it.label}
                     >
-                      {it.sub}
+                      {it.label}
                     </div>
+                    {it.sub && (
+                      <div className="text-xs text-text-secondary truncate" title={it.sub}>
+                        {it.sub}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="mono text-sm font-semibold text-foreground">
+                      {formatMiles(it.miles)}
+                    </div>
+                    <div className="mono text-[0.65rem] text-text-secondary">
+                      {it.count} log{it.count === 1 ? "" : "s"}
+                    </div>
+                  </div>
+                </>
+              );
+              return (
+                <li key={it.key}>
+                  {clickable ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className={rowCls}
+                          onClick={() => onSelect!(it.key)}
+                          aria-label={clickHint ? clickHint(it) : defaultHint(it)}
+                        >
+                          {content}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="max-w-[16rem] text-center"
+                      >
+                        {clickHint ? clickHint(it) : defaultHint(it)}
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <div className={rowCls}>{content}</div>
                   )}
-                </div>
-                <div className="text-right">
-                  <div className="mono text-sm font-semibold text-foreground">
-                    {formatMiles(it.miles)}
-                  </div>
-                  <div className="mono text-[0.65rem] text-text-secondary">
-                    {it.count} log{it.count === 1 ? "" : "s"}
-                  </div>
-                </div>
-              </>
-            );
-            return (
-              <li key={it.key}>
-                {clickable ? (
-                  <button type="button" className={rowCls} onClick={() => onSelect!(it.key)}>
-                    {content}
-                  </button>
-                ) : (
-                  <div className={rowCls}>{content}</div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      )}
-    </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }
-
