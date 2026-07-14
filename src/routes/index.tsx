@@ -45,7 +45,6 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="relative min-w-0 overflow-visible pr-1">
@@ -170,7 +169,6 @@ function Index() {
         {/* Top layout — Top: top states · Left: hero + stats · Right: map */}
         {!stateCode ? (
           <section className="grid gap-8 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch lg:min-h-[calc(100vh-5rem)]">
-
             {/* Top states — below the site header, not over the map */}
             <div className="col-span-full">
               <LeaderboardList
@@ -217,7 +215,6 @@ function Index() {
                 </div>
               </div>
 
-
               <div className="mt-8 lg:mt-0">
                 <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-lg">
                   <Stat
@@ -232,9 +229,7 @@ function Index() {
                   Updated in real time · miles + logs
                 </p>
               </div>
-
             </div>
-
 
             {/* RIGHT — map surface */}
             <div id="explore" className="relative flex flex-col">
@@ -251,9 +246,6 @@ function Index() {
                     onSelect={(code) => setSearch({ state: code })}
                   />
                 </div>
-
-
-
               </div>
 
               <p className="mt-3 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
@@ -317,7 +309,9 @@ function Index() {
                   loading={isLoading}
                   emptyLabel="No miles logged in this state yet."
                   onSelect={(key) => setSearch({ county: key })}
-                  clickHint={(it) => `Click to see ${it.label}'s active cities and local leaderboard.`}
+                  clickHint={(it) =>
+                    `Click to see ${it.label}'s active cities and local leaderboard.`
+                  }
                 />
               </div>
             </div>

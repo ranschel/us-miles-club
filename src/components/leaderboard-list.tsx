@@ -2,12 +2,7 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import type { CityAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 export function CityList({
   countyName,
@@ -106,8 +101,7 @@ export function LeaderboardList({
   const filtered = query
     ? items.filter(
         (it) =>
-          it.label.toLowerCase().includes(query) ||
-          (it.sub ?? "").toLowerCase().includes(query),
+          it.label.toLowerCase().includes(query) || (it.sub ?? "").toLowerCase().includes(query),
       )
     : items.slice(0, topN);
 
@@ -172,10 +166,7 @@ export function LeaderboardList({
                       {it.label}
                     </div>
                     {it.sub && (
-                      <div
-                        className="text-xs text-text-secondary truncate"
-                        title={it.sub}
-                      >
+                      <div className="text-xs text-text-secondary truncate" title={it.sub}>
                         {it.sub}
                       </div>
                     )}
@@ -204,7 +195,11 @@ export function LeaderboardList({
                           {content}
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent side="top" align="center" className="max-w-[16rem] text-center">
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="max-w-[16rem] text-center"
+                      >
                         {clickHint ? clickHint(it) : defaultHint(it)}
                       </TooltipContent>
                     </Tooltip>
