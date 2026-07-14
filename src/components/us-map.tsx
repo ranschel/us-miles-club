@@ -110,7 +110,7 @@ export function NationalMap({
                     }}
                   />
                 </TooltipTrigger>
-                <TooltipContent side="top" align="center">
+                <TooltipContent side="top" align="center" className="max-w-xs text-center">
                   {tooltip}
                 </TooltipContent>
               </Tooltip>
@@ -199,7 +199,7 @@ export function CountyMap({
                     }}
                   />
                 </TooltipTrigger>
-                <TooltipContent side="top" align="center">
+                <TooltipContent side="top" align="center" className="max-w-xs text-center">
                   {tooltip}
                 </TooltipContent>
               </Tooltip>
