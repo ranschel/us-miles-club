@@ -47,7 +47,7 @@ export function SiteHeader() {
           <img
             src={logoAsset.url}
             alt="US Miles Club"
-            className="h-9 w-9 shrink-0 rounded-lg object-cover"
+            className="h-12 w-12 shrink-0 rounded-lg object-cover"
           />
           <span className="hidden sm:inline">US Miles Club</span>
         </Link>
