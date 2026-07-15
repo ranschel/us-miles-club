@@ -277,21 +277,7 @@ function Index() {
               <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-              <div className="glass p-4 md:p-5">
-                <CountyMap
-                  stateCode={stateCode}
-                  byCounty={byCounty}
-                  selectedFips={countyFips}
-                  onSelect={(fips) => setSearch({ county: fips })}
-                />
-                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
-                  {countyFips
-                    ? "Click the same county again to close its city list."
-                    : "Click a county to reveal its active cities."}
-                </p>
-              </div>
-
+            <div className="grid gap-6 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch">
               <div className="space-y-6">
                 {selectedCounty && (
                   <div className="glass">
@@ -313,6 +299,20 @@ function Index() {
                     `Click to see ${it.label}'s active cities and local leaderboard.`
                   }
                 />
+              </div>
+
+              <div className="glass p-4 md:p-5">
+                <CountyMap
+                  stateCode={stateCode}
+                  byCounty={byCounty}
+                  selectedFips={countyFips}
+                  onSelect={(fips) => setSearch({ county: fips })}
+                />
+                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+                  {countyFips
+                    ? "Click the same county again to close its city list."
+                    : "Click a county to reveal its active cities."}
+                </p>
               </div>
             </div>
           </section>
