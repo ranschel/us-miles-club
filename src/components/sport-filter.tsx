@@ -36,23 +36,22 @@ export function SportFilter({
     >
       {OPTIONS.map(({ value: v, label, Icon }) => {
         const active = value.includes(v);
+        const cls = `inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold font-display transition-all ${
+          active
+            ? "bg-[rgba(94,234,255,0.14)] text-secondary shadow-[0_0_18px_rgba(94,234,255,0.35)]"
+            : "text-text-secondary hover:text-foreground"
+        }`;
         return (
           <Tooltip key={v}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => toggle(v)}
-                aria-pressed={active}
-                aria-label={HINTS[v]}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold font-display transition-all ${
-                  active
-                    ? "bg-[rgba(94,234,255,0.14)] text-secondary shadow-[0_0_18px_rgba(94,234,255,0.35)]"
-                    : "text-text-secondary hover:text-foreground"
-                }`}
-              >
-                <Icon size={16} strokeWidth={2} />
-                {label}
-              </button>
+            <TooltipTrigger
+              asChild={false}
+              className={cls}
+              aria-label={HINTS[v]}
+              aria-pressed={active}
+              onClick={() => toggle(v)}
+            >
+              <Icon size={16} strokeWidth={2} />
+              {label}
             </TooltipTrigger>
             <TooltipContent
               side="top"
