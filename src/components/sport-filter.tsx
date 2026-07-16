@@ -33,8 +33,8 @@ export function SportFilter({
   };
 
   return (
-    <TooltipProvider>
-      <div
+      <TooltipProvider delayDuration={0}>
+        <div
         role="group"
         aria-label="Filter map and leaderboards by sport"
         className="inline-flex items-center gap-1 rounded-full border border-border bg-surface p-1 backdrop-blur-lg"
