@@ -203,7 +203,7 @@ function Index() {
                 </div>
 
                 {/* Top states — below the main tagline and CTA */}
-                <div className="mt-8">
+                <div className="mt-8 mb-8">
                   <LeaderboardList
                     title="Top states"
                     items={topStates.slice(0, 5)}
