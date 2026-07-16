@@ -151,37 +151,35 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider delayDuration={0}>
+      <div
+        className="relative flex min-h-screen flex-col text-foreground"
+        suppressHydrationWarning
+      >
         <div
-          className="relative flex min-h-screen flex-col text-foreground"
-          suppressHydrationWarning
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${bgAsset.url})` }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none fixed inset-0 -z-10 bg-background/70"
-          />
-          <SiteHeader />
-          <main className="flex-1" suppressHydrationWarning>
-            <Outlet />
-          </main>
-          <SiteFooter />
-        </div>
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "var(--color-surface)",
-              color: "var(--color-foreground)",
-              border: "1px solid var(--color-border)",
-            },
-          }}
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${bgAsset.url})` }}
         />
-      </TooltipProvider>
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-background/70"
+        />
+        <SiteHeader />
+        <main className="flex-1" suppressHydrationWarning>
+          <Outlet />
+        </main>
+        <SiteFooter />
+      </div>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: "var(--color-surface)",
+            color: "var(--color-foreground)",
+            border: "1px solid var(--color-border)",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }
