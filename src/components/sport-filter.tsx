@@ -13,11 +13,21 @@ const OPTIONS: { value: Sport; label: string; Icon: typeof Footprints }[] = [
   { value: "bike", label: "Bike", Icon: Bike },
 ];
 
-const HINTS: Record<Sport, string> = {
-  walk: "Toggle walking miles on the map and leaderboards",
-  run: "Toggle running miles on the map and leaderboards",
-  bike: "Toggle biking miles on the map and leaderboards",
+type Context = "map" | "leaderboards" | "rankings" | "both";
+
+const SUFFIX: Record<Context, string> = {
+  map: "on the map",
+  leaderboards: "on the leaderboards",
+  rankings: "in your rankings",
+  both: "on the map and leaderboards",
 };
+
+const VERB: Record<Sport, string> = {
+  walk: "walking",
+  run: "running",
+  bike: "biking",
+};
+
 
 function SportButtonTooltip({
   label,
