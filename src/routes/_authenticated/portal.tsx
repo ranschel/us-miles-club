@@ -322,7 +322,7 @@ function Portal() {
               Based on where you've logged the most miles.
             </p>
           </div>
-          <SportFilter value={sportFilter} onChange={setSportFilter} />
+          <SportFilter value={sportFilter} onChange={setSportFilter} context="rankings" />
         </div>
         {rankings ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
