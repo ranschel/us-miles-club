@@ -99,7 +99,7 @@ function Leaderboards() {
             Who's moving where. Filter to see how your sport ranks.
           </p>
         </div>
-        <SportFilter value={sports} onChange={setSports} />
+        <SportFilter value={sports} onChange={setSports} context="leaderboards" />
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
