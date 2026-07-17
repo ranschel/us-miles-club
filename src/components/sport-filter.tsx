@@ -70,9 +70,11 @@ function SportButtonTooltip({
 export function SportFilter({
   value,
   onChange,
+  context = "both",
 }: {
   value: Sport[];
   onChange: (v: Sport[]) => void;
+  context?: Context;
 }) {
   const toggle = (s: Sport) => {
     const has = value.includes(s);
@@ -80,11 +82,13 @@ export function SportFilter({
     onChange(next.length === 0 ? ["walk", "run", "bike"] : next);
   };
 
+  const suffix = SUFFIX[context];
+
   return (
     <TooltipProvider>
       <div
         role="group"
-        aria-label="Filter map and leaderboards by sport"
+        aria-label={`Filter ${suffix} by sport`}
         className="inline-flex items-center gap-1 rounded-full border border-border bg-surface p-1 backdrop-blur-lg"
         style={{ boxShadow: "var(--shadow-panel)" }}
       >
@@ -92,7 +96,7 @@ export function SportFilter({
           <SportButtonTooltip
             key={v}
             label={label}
-            hint={HINTS[v]}
+            hint={`Toggle ${VERB[v]} miles ${suffix}`}
             active={value.includes(v)}
             onClick={() => toggle(v)}
           >
@@ -103,3 +107,4 @@ export function SportFilter({
     </TooltipProvider>
   );
 }
+
