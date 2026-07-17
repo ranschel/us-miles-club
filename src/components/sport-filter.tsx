@@ -71,23 +71,25 @@ export function SportFilter({
   };
 
   return (
-    <div
-      role="group"
-      aria-label="Filter map and leaderboards by sport"
-      className="inline-flex items-center gap-1 rounded-full border border-border bg-surface p-1 backdrop-blur-lg"
-      style={{ boxShadow: "var(--shadow-panel)" }}
-    >
-      {OPTIONS.map(({ value: v, label, Icon }) => (
-        <SportButtonTooltip
-          key={v}
-          label={label}
-          hint={HINTS[v]}
-          active={value.includes(v)}
-          onClick={() => toggle(v)}
-        >
-          <Icon size={16} strokeWidth={2} />
-        </SportButtonTooltip>
-      ))}
-    </div>
+    <TooltipProvider>
+      <div
+        role="group"
+        aria-label="Filter map and leaderboards by sport"
+        className="inline-flex items-center gap-1 rounded-full border border-border bg-surface p-1 backdrop-blur-lg"
+        style={{ boxShadow: "var(--shadow-panel)" }}
+      >
+        {OPTIONS.map(({ value: v, label, Icon }) => (
+          <SportButtonTooltip
+            key={v}
+            label={label}
+            hint={HINTS[v]}
+            active={value.includes(v)}
+            onClick={() => toggle(v)}
+          >
+            <Icon size={16} strokeWidth={2} />
+          </SportButtonTooltip>
+        ))}
+      </div>
+    </TooltipProvider>
   );
 }
