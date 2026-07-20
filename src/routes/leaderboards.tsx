@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
-import { aggregate, aggregateIndividuals, filterSports } from "@/lib/aggregate";
-import { abbreviateName } from "@/lib/format";
+import { aggregate, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+
 
 export const Route = createFileRoute("/leaderboards")({
   component: Leaderboards,
@@ -81,15 +82,6 @@ function Leaderboards() {
   }
   const topCities = [...cityMap.values()].sort((a, b) => b.miles - a.miles);
 
-  const topIndividuals = useMemo(() => {
-    return aggregateIndividuals(filtered).map((p) => ({
-      key: p.user_id ?? "__anon__",
-      label: abbreviateName(p.full_name?.trim() || "Anonymous"),
-      miles: p.totalMiles,
-      count: p.count,
-    }));
-  }, [filtered]);
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -102,13 +94,30 @@ function Leaderboards() {
         <SportFilter value={sports} onChange={setSports} context="leaderboards" />
       </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <LeaderboardList title="States" items={topStates} loading={isLoading} searchable searchPlaceholder="Search states" />
-        <LeaderboardList title="Counties" items={topCounties} loading={isLoading} searchable searchPlaceholder="Search counties" />
-        <LeaderboardList title="Cities" items={topCities} loading={isLoading} searchable searchPlaceholder="Search cities" />
-        <LeaderboardList title="Individuals" items={topIndividuals} loading={isLoading} searchable searchPlaceholder="Search names" />
-      </div>
+      <Tabs defaultValue="states" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="states">States</TabsTrigger>
+          <TabsTrigger value="counties">Counties</TabsTrigger>
+          <TabsTrigger value="cities">Cities</TabsTrigger>
+        </TabsList>
+        <TabsContent value="states">
+          <div className="max-w-2xl">
+            <LeaderboardList title="Top 10 States" items={topStates} loading={isLoading} searchable searchPlaceholder="Search states" topN={10} />
+          </div>
+        </TabsContent>
+        <TabsContent value="counties">
+          <div className="max-w-2xl">
+            <LeaderboardList title="Top 10 Counties" items={topCounties} loading={isLoading} searchable searchPlaceholder="Search counties" topN={10} />
+          </div>
+        </TabsContent>
+        <TabsContent value="cities">
+          <div className="max-w-2xl">
+            <LeaderboardList title="Top 10 Cities" items={topCities} loading={isLoading} searchable searchPlaceholder="Search cities" topN={10} />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
+
 
