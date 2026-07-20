@@ -174,13 +174,35 @@ export function LeaderboardList({
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="mono text-sm font-semibold text-foreground">
+                    <div className="mono text-sm font-semibold text-foreground flex items-center justify-end gap-1.5">
+                      {it.trend === "up" && (
+                        <TrendingUp
+                          size={14}
+                          className="text-emerald-400"
+                          aria-label="Trending up over the last 7 days"
+                        />
+                      )}
+                      {it.trend === "down" && (
+                        <TrendingDown
+                          size={14}
+                          className="text-rose-400"
+                          aria-label="Trending down over the last 7 days"
+                        />
+                      )}
+                      {it.trend === "flat" && (
+                        <Minus
+                          size={14}
+                          className="text-text-secondary"
+                          aria-label="No recent change"
+                        />
+                      )}
                       {formatMiles(it.miles)}
                     </div>
                     <div className="mono text-[0.65rem] text-text-secondary">
                       {it.count} log{it.count === 1 ? "" : "s"}
                     </div>
                   </div>
+
                 </>
               );
               return (
