@@ -18,7 +18,9 @@ const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
   state: z.string().length(2).optional(),
   county: z.string().length(5).optional(),
+  from: z.enum(["leaderboards"]).optional(),
 });
+
 
 export const Route = createFileRoute("/")({
   validateSearch: (s) => SearchSchema.parse(s),
