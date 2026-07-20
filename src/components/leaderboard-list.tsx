@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import type { Trend } from "@/lib/aggregate";
+
 import type { CityAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -87,7 +89,7 @@ export function LeaderboardList({
   topN = 20,
 }: {
   title: string;
-  items: { key: string; label: string; sub?: string; miles: number; count: number }[];
+  items: { key: string; label: string; sub?: string; miles: number; count: number; trend?: Trend }[];
   loading?: boolean;
   emptyLabel?: string;
   onSelect?: (key: string) => void;
