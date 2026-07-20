@@ -8,7 +8,7 @@ import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
-import { aggregate, citiesForCounty, filterSports } from "@/lib/aggregate";
+import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,6 +119,9 @@ function Index() {
   const filtered = useMemo(() => filterSports(allRows, sports), [allRows, sports]);
   const { byState, byCounty } = useMemo(() => aggregate(filtered), [filtered]);
 
+  const stateTrends = useMemo(() => computeTrends(filtered, (r) => r.state_code), [filtered]);
+  const countyTrends = useMemo(() => computeTrends(filtered, (r) => r.county_fips), [filtered]);
+
   const topStates = useMemo(
     () =>
       [...byState.values()]
@@ -129,8 +132,9 @@ function Index() {
           label: stateName(s.code),
           miles: s.totalMiles,
           count: s.count,
+          trend: stateTrends.get(s.code) ?? "flat",
         })),
-    [byState],
+    [byState, stateTrends],
   );
 
   const topCountiesInState = useMemo(() => {
@@ -145,8 +149,10 @@ function Index() {
         sub: STATE_BY_CODE[c.state_code]?.name,
         miles: c.totalMiles,
         count: c.count,
+        trend: countyTrends.get(c.fips) ?? "flat",
       }));
-  }, [byCounty, stateCode]);
+  }, [byCounty, stateCode, countyTrends]);
+
 
   const cities = useMemo(
     () => (countyFips ? citiesForCounty(filtered, countyFips) : []),

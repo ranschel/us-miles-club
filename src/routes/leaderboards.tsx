@@ -5,7 +5,7 @@ import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
-import { aggregate, filterSports } from "@/lib/aggregate";
+import { aggregate, computeTrends, filterSports } from "@/lib/aggregate";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
 
@@ -46,6 +46,13 @@ function Leaderboards() {
   const filtered = useMemo(() => filterSports(rows, sports), [rows, sports]);
   const { byState, byCounty } = useMemo(() => aggregate(filtered), [filtered]);
 
+  const stateTrends = useMemo(() => computeTrends(filtered, (r) => r.state_code), [filtered]);
+  const countyTrends = useMemo(() => computeTrends(filtered, (r) => r.county_fips), [filtered]);
+  const cityTrends = useMemo(
+    () => computeTrends(filtered, (r) => `${r.state_code}:${r.county_fips}:${r.city}`),
+    [filtered],
+  );
+
   const topStates = [...byState.values()]
     .sort((a, b) => b.totalMiles - a.totalMiles)
     .map((s) => ({
@@ -53,6 +60,7 @@ function Leaderboards() {
       label: stateName(s.code),
       miles: s.totalMiles,
       count: s.count,
+      trend: stateTrends.get(s.code) ?? ("flat" as const),
     }));
 
   const topCounties = [...byCounty.values()]
@@ -63,6 +71,7 @@ function Leaderboards() {
       sub: STATE_BY_CODE[c.state_code]?.name,
       miles: c.totalMiles,
       count: c.count,
+      trend: countyTrends.get(c.fips) ?? ("flat" as const),
     }));
 
   // Top cities across everything
@@ -80,7 +89,10 @@ function Leaderboards() {
     existing.count += 1;
     cityMap.set(key, existing);
   }
-  const topCities = [...cityMap.values()].sort((a, b) => b.miles - a.miles);
+  const topCities = [...cityMap.values()]
+    .sort((a, b) => b.miles - a.miles)
+    .map((c) => ({ ...c, trend: cityTrends.get(c.key) ?? ("flat" as const) }));
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">

@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import type { Trend } from "@/lib/aggregate";
+
 import type { CityAgg } from "@/lib/aggregate";
 import { formatMiles } from "@/lib/format";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -87,7 +89,7 @@ export function LeaderboardList({
   topN = 20,
 }: {
   title: string;
-  items: { key: string; label: string; sub?: string; miles: number; count: number }[];
+  items: { key: string; label: string; sub?: string; miles: number; count: number; trend?: Trend }[];
   loading?: boolean;
   emptyLabel?: string;
   onSelect?: (key: string) => void;
@@ -172,13 +174,35 @@ export function LeaderboardList({
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="mono text-sm font-semibold text-foreground">
+                    <div className="mono text-sm font-semibold text-foreground flex items-center justify-end gap-1.5">
+                      {it.trend === "up" && (
+                        <TrendingUp
+                          size={14}
+                          className="text-emerald-400"
+                          aria-label="Trending up over the last 7 days"
+                        />
+                      )}
+                      {it.trend === "down" && (
+                        <TrendingDown
+                          size={14}
+                          className="text-rose-400"
+                          aria-label="Trending down over the last 7 days"
+                        />
+                      )}
+                      {it.trend === "flat" && (
+                        <Minus
+                          size={14}
+                          className="text-text-secondary"
+                          aria-label="No recent change"
+                        />
+                      )}
                       {formatMiles(it.miles)}
                     </div>
                     <div className="mono text-[0.65rem] text-text-secondary">
                       {it.count} log{it.count === 1 ? "" : "s"}
                     </div>
                   </div>
+
                 </>
               );
               return (
