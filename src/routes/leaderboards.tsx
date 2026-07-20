@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -35,7 +36,21 @@ export const Route = createFileRoute("/leaderboards")({
 
 
 function Leaderboards() {
+  const navigate = useNavigate();
   const [sports, setSports] = useState<Sport[]>(["walk", "run", "bike"]);
+
+  const goToState = (code: string) =>
+    navigate({ to: "/", search: { state: code, from: "leaderboards" } as never });
+  const goToCounty = (fips: string) => {
+    const state = fips.slice(0, 2);
+    navigate({ to: "/", search: { state, county: fips, from: "leaderboards" } as never });
+  };
+  const goToCity = (key: string) => {
+    // key format: "SS:FFFFF:City"
+    const [state, county] = key.split(":");
+    navigate({ to: "/", search: { state, county, from: "leaderboards" } as never });
+  };
+
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["public-workouts"],
@@ -114,19 +129,47 @@ function Leaderboards() {
         </TabsList>
         <TabsContent value="states">
           <div className="max-w-2xl">
-            <LeaderboardList title="Top 10 States" items={topStates} loading={isLoading} searchable searchPlaceholder="Search states" topN={10} />
+            <LeaderboardList
+              title="Top 10 States"
+              items={topStates}
+              loading={isLoading}
+              searchable
+              searchPlaceholder="Search states"
+              topN={10}
+              onSelect={goToState}
+              clickHint={(it) => `Click to open ${it.label}'s county map and cities.`}
+            />
           </div>
         </TabsContent>
         <TabsContent value="counties">
           <div className="max-w-2xl">
-            <LeaderboardList title="Top 10 Counties" items={topCounties} loading={isLoading} searchable searchPlaceholder="Search counties" topN={10} />
+            <LeaderboardList
+              title="Top 10 Counties"
+              items={topCounties}
+              loading={isLoading}
+              searchable
+              searchPlaceholder="Search counties"
+              topN={10}
+              onSelect={goToCounty}
+              clickHint={(it) => `Click to open the ${it.label} map and city rankings.`}
+            />
           </div>
         </TabsContent>
         <TabsContent value="cities">
           <div className="max-w-2xl">
-            <LeaderboardList title="Top 10 Cities" items={topCities} loading={isLoading} searchable searchPlaceholder="Search cities" topN={10} />
+            <LeaderboardList
+              title="Top 10 Cities"
+              items={topCities}
+              loading={isLoading}
+              searchable
+              searchPlaceholder="Search cities"
+              topN={10}
+              onSelect={goToCity}
+              clickHint={(it) => `Click to open ${it.label} on its county map.`}
+            />
           </div>
         </TabsContent>
+
       </Tabs>
     </div>
   );

@@ -18,7 +18,9 @@ const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
   state: z.string().length(2).optional(),
   county: z.string().length(5).optional(),
+  from: z.enum(["leaderboards"]).optional(),
 });
+
 
 export const Route = createFileRoute("/")({
   validateSearch: (s) => SearchSchema.parse(s),
@@ -263,13 +265,20 @@ function Index() {
           <section>
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSearch({ state: null, county: null })}
-                  className="btn btn-ghost"
-                >
-                  <ArrowLeft size={16} strokeWidth={2} /> National map
-                </button>
+                {search.from === "leaderboards" ? (
+                  <Link to="/leaderboards" className="btn btn-ghost">
+                    <ArrowLeft size={16} strokeWidth={2} /> Back to leaderboards
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setSearch({ state: null, county: null })}
+                    className="btn btn-ghost"
+                  >
+                    <ArrowLeft size={16} strokeWidth={2} /> National map
+                  </button>
+                )}
+
                 <h3 className="font-display text-2xl font-bold">{stateName(stateCode)}</h3>
                 <span className="chip">
                   <Trophy size={12} strokeWidth={2} />

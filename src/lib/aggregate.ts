@@ -142,10 +142,18 @@ export function computeTrends<T extends { performed_at: string; distance_miles: 
   keyFn: (r: T) => string,
   windowDays = 7,
 ): Map<string, Trend> {
-  const now = Date.now();
+  // Anchor to the most recent workout in the dataset so trends stay meaningful
+  // even when the seed data doesn't reach "today".
+  let maxT = 0;
+  for (const r of rows) {
+    const t = new Date(r.performed_at).getTime();
+    if (!isNaN(t) && t > maxT) maxT = t;
+  }
+  const now = maxT || Date.now();
   const dayMs = 86400000;
   const recentStart = now - windowDays * dayMs;
   const priorStart = now - 2 * windowDays * dayMs;
+
   const recent = new Map<string, number>();
   const prior = new Map<string, number>();
   for (const r of rows) {
