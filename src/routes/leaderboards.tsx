@@ -111,6 +111,10 @@ function Leaderboards() {
     .sort((a, b) => b.miles - a.miles)
     .map((c) => ({ ...c, trend: cityTrends.get(c.key) ?? ("flat" as const) }));
 
+  const insights = useMemo(
+    () => (rows.length ? buildInsights({ allRows: rows, sports, scope: { level: "national" } }) : []),
+    [rows, sports],
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
@@ -124,7 +128,12 @@ function Leaderboards() {
         <SportFilter value={sports} onChange={setSports} context="leaderboards" />
       </div>
 
+      <div className="mb-6">
+        <DataInsights insights={insights} sports={sports} loading={isLoading} />
+      </div>
+
       <Tabs defaultValue="states" className="w-full">
+
         <TabsList className="mb-6">
           <TabsTrigger value="states">States</TabsTrigger>
           <TabsTrigger value="counties">Counties</TabsTrigger>
