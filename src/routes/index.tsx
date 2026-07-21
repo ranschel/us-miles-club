@@ -171,6 +171,28 @@ function Index() {
     [filtered],
   );
 
+  const insights = useMemo(() => {
+    if (!allRows.length) return [];
+    if (countyFips) {
+      const county = byCounty.get(countyFips);
+      return buildInsights({
+        allRows,
+        sports,
+        scope: {
+          level: "county",
+          stateCode: stateCode ?? countyFips.slice(0, 2),
+          countyFips,
+          countyName: county?.name ?? "Selected",
+        },
+      });
+    }
+    if (stateCode) {
+      return buildInsights({ allRows, sports, scope: { level: "state", stateCode } });
+    }
+    return buildInsights({ allRows, sports, scope: { level: "national" } });
+  }, [allRows, sports, stateCode, countyFips, byCounty]);
+
+
   return (
     <div className="relative">
       {/* Background flourish */}
