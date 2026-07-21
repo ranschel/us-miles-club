@@ -7,12 +7,15 @@ import { ArrowLeft, Trophy } from "lucide-react";
 import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
+import { DataInsights } from "@/components/data-insights";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
+import { buildInsights } from "@/lib/insights";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
