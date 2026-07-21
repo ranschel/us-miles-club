@@ -265,7 +265,8 @@ function Index() {
             </div>
 
             {/* RIGHT — map surface */}
-            <div id="explore" className="relative flex flex-col">
+            <div id="explore" className="relative flex flex-col gap-4">
+              <DataInsights insights={insights} sports={sports} loading={isLoading} />
               <div className="glass relative flex-1 overflow-hidden p-4 md:p-5 flex flex-col">
                 {/* Sport filter — floating on the map */}
                 <div className="absolute left-1/2 top-6 z-10 -translate-x-1/2">
@@ -281,10 +282,11 @@ function Index() {
                 </div>
               </div>
 
-              <p className="mt-3 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+              <p className="mt-1 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
                 Brighter states = more miles logged · click to zoom
               </p>
             </div>
+
           </section>
         ) : (
           <section>
