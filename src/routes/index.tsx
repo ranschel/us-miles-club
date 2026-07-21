@@ -319,7 +319,12 @@ function Index() {
               <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
             </div>
 
+            <div className="mb-6">
+              <DataInsights insights={insights} sports={sports} loading={isLoading} />
+            </div>
+
             <div className="grid gap-6 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch">
+
               <div className="space-y-6">
                 {selectedCounty && (
                   <div className="glass">
