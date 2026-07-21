@@ -7,12 +7,15 @@ import { ArrowLeft, Trophy } from "lucide-react";
 import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
+import { DataInsights } from "@/components/data-insights";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
+import { buildInsights } from "@/lib/insights";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import { formatMiles } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+
 
 const SearchSchema = z.object({
   sports: z.array(z.enum(["walk", "run", "bike"])).optional(),
@@ -168,6 +171,28 @@ function Index() {
     [filtered],
   );
 
+  const insights = useMemo(() => {
+    if (!allRows.length) return [];
+    if (countyFips) {
+      const county = byCounty.get(countyFips);
+      return buildInsights({
+        allRows,
+        sports,
+        scope: {
+          level: "county",
+          stateCode: stateCode ?? countyFips.slice(0, 2),
+          countyFips,
+          countyName: county?.name ?? "Selected",
+        },
+      });
+    }
+    if (stateCode) {
+      return buildInsights({ allRows, sports, scope: { level: "state", stateCode } });
+    }
+    return buildInsights({ allRows, sports, scope: { level: "national" } });
+  }, [allRows, sports, stateCode, countyFips, byCounty]);
+
+
   return (
     <div className="relative">
       {/* Background flourish */}
@@ -240,7 +265,8 @@ function Index() {
             </div>
 
             {/* RIGHT — map surface */}
-            <div id="explore" className="relative flex flex-col">
+            <div id="explore" className="relative flex flex-col gap-4">
+              <DataInsights insights={insights} sports={sports} loading={isLoading} />
               <div className="glass relative flex-1 overflow-hidden p-4 md:p-5 flex flex-col">
                 {/* Sport filter — floating on the map */}
                 <div className="absolute left-1/2 top-6 z-10 -translate-x-1/2">
@@ -256,10 +282,11 @@ function Index() {
                 </div>
               </div>
 
-              <p className="mt-3 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+              <p className="mt-1 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
                 Brighter states = more miles logged · click to zoom
               </p>
             </div>
+
           </section>
         ) : (
           <section>
@@ -292,7 +319,12 @@ function Index() {
               <SportFilter value={sports} onChange={(v) => setSearch({ sports: v })} />
             </div>
 
+            <div className="mb-6">
+              <DataInsights insights={insights} sports={sports} loading={isLoading} />
+            </div>
+
             <div className="grid gap-6 lg:grid-cols-[minmax(320px,38%)_1fr] lg:items-stretch">
+
               <div className="space-y-6">
                 {selectedCounty && (
                   <div className="glass">

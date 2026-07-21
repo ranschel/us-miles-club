@@ -4,11 +4,14 @@ import { useMemo, useState } from "react";
 
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
+import { DataInsights } from "@/components/data-insights";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, computeTrends, filterSports } from "@/lib/aggregate";
+import { buildInsights } from "@/lib/insights";
 import { STATE_BY_CODE, stateName } from "@/lib/us-geo";
 import logoAsset from "@/assets/us-miles-club-logo.png.asset.json";
+
 
 
 export const Route = createFileRoute("/leaderboards")({
@@ -108,6 +111,10 @@ function Leaderboards() {
     .sort((a, b) => b.miles - a.miles)
     .map((c) => ({ ...c, trend: cityTrends.get(c.key) ?? ("flat" as const) }));
 
+  const insights = useMemo(
+    () => (rows.length ? buildInsights({ allRows: rows, sports, scope: { level: "national" } }) : []),
+    [rows, sports],
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
@@ -121,7 +128,12 @@ function Leaderboards() {
         <SportFilter value={sports} onChange={setSports} context="leaderboards" />
       </div>
 
+      <div className="mb-6">
+        <DataInsights insights={insights} sports={sports} loading={isLoading} />
+      </div>
+
       <Tabs defaultValue="states" className="w-full">
+
         <TabsList className="mb-6">
           <TabsTrigger value="states">States</TabsTrigger>
           <TabsTrigger value="counties">Counties</TabsTrigger>
