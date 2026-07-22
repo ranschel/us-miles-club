@@ -30,7 +30,11 @@ import { WorkoutChart } from "@/components/workout-chart";
 import { BadgesPanel } from "@/components/badges-panel";
 import { MonthlyGoal } from "@/components/monthly-goal";
 import { ShareRankCard } from "@/components/share-rank-card";
+import { PersonalInsights } from "@/components/personal-insights";
+import { ActivityFootprint } from "@/components/activity-footprint";
+import { generatePersonalInsights } from "@/lib/personal-insights";
 import type { Sport } from "@/lib/public-workouts";
+
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
@@ -309,9 +313,20 @@ function Portal() {
       </div>
 
 
+      <PersonalInsights
+        insights={generatePersonalInsights({
+          workouts: data,
+          rankings,
+          monthlyGoal: profile?.monthly_goal_miles ?? null,
+        })}
+      />
+
       <BadgesPanel workouts={data} />
 
       <WorkoutChart workouts={data} />
+
+      <ActivityFootprint workouts={data} sports={sportFilter} />
+
 
       <div className="card mb-6">
 
