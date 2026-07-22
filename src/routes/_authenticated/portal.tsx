@@ -313,9 +313,20 @@ function Portal() {
       </div>
 
 
+      <PersonalInsights
+        insights={generatePersonalInsights({
+          workouts: data,
+          rankings,
+          monthlyGoal: profile?.monthly_goal_miles ?? null,
+        })}
+      />
+
       <BadgesPanel workouts={data} />
 
       <WorkoutChart workouts={data} />
+
+      <ActivityFootprint workouts={data} sports={sportFilter} />
+
 
       <div className="card mb-6">
 
