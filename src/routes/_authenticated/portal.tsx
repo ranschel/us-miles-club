@@ -30,7 +30,11 @@ import { WorkoutChart } from "@/components/workout-chart";
 import { BadgesPanel } from "@/components/badges-panel";
 import { MonthlyGoal } from "@/components/monthly-goal";
 import { ShareRankCard } from "@/components/share-rank-card";
+import { PersonalInsights } from "@/components/personal-insights";
+import { ActivityFootprint } from "@/components/activity-footprint";
+import { generatePersonalInsights } from "@/lib/personal-insights";
 import type { Sport } from "@/lib/public-workouts";
+
 
 export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
