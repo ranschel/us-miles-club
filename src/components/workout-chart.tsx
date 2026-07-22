@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Sparkles } from "lucide-react";
 import { formatMiles } from "@/lib/format";
 
 type Workout = {
@@ -10,7 +10,7 @@ type Workout = {
 function startOfWeek(d: Date): Date {
   const nd = new Date(d);
   nd.setHours(0, 0, 0, 0);
-  const day = nd.getDay(); // 0 Sun .. 6 Sat
+  const day = nd.getDay();
   nd.setDate(nd.getDate() - day);
   return nd;
 }
@@ -24,7 +24,6 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
     const now = new Date();
     const buckets: { start: Date; miles: number }[] = [];
     const first = startOfWeek(now);
-    // Last 8 weeks
     for (let i = 7; i >= 0; i--) {
       const s = new Date(first);
       s.setDate(s.getDate() - i * 7);
@@ -44,6 +43,27 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
 
   const max = Math.max(1, ...weeks.map((w) => w.miles));
   const total8w = weeks.reduce((s, w) => s + w.miles, 0);
+  const bestIdx = weeks.reduce((bi, w, i) => (w.miles > weeks[bi].miles ? i : bi), 0);
+  const bestWeek = weeks[bestIdx];
+  const currentWeek = weeks[weeks.length - 1];
+  const priorActive = [...weeks.slice(0, -1)].reverse().find((w) => w.miles > 0);
+
+  let interpretation = "";
+  if (currentWeek.miles > 0 && priorActive) {
+    const diff = currentWeek.miles - priorActive.miles;
+    const pct = Math.round((diff / priorActive.miles) * 100);
+    if (pct >= 10) {
+      interpretation = `This week you're up ${pct}% — ${formatMiles(currentWeek.miles)} versus ${formatMiles(priorActive.miles)} the week before.`;
+    } else if (pct <= -10) {
+      interpretation = `This week you're down ${Math.abs(pct)}% — ${formatMiles(currentWeek.miles)} versus ${formatMiles(priorActive.miles)} the week before.`;
+    } else {
+      interpretation = `Steady week — ${formatMiles(currentWeek.miles)} logged, near your ${formatMiles(priorActive.miles)} the week before.`;
+    }
+  } else if (currentWeek.miles > 0) {
+    interpretation = `New streak — ${formatMiles(currentWeek.miles)} logged this week.`;
+  } else if (bestWeek.miles > 0) {
+    interpretation = `Your strongest week was ${formatMiles(bestWeek.miles)} on ${fmtWeekLabel(bestWeek.start)}.`;
+  }
 
   if (workouts.length === 0) {
     return (
@@ -81,19 +101,37 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
         {weeks.map((w, i) => {
           const pct = (w.miles / max) * 100;
           const isCurrent = i === weeks.length - 1;
+          const isBest = i === bestIdx && w.miles > 0;
+          const prior = i > 0 ? weeks[i - 1].miles : 0;
+          const diff = prior > 0 ? Math.round(((w.miles - prior) / prior) * 100) : null;
+          const tip = `Week of ${fmtWeekLabel(w.start)} — ${formatMiles(w.miles)}${
+            diff !== null && w.miles > 0 ? ` (${diff >= 0 ? "+" : ""}${diff}% vs prior)` : ""
+          }`;
           return (
-            <div key={i} className="flex h-full flex-1 flex-col items-center gap-2">
+            <div key={i} className="relative flex h-full flex-1 flex-col items-center gap-2">
+              {isBest && (
+                <div
+                  className="absolute -top-1 z-10 flex items-center gap-1 rounded-full bg-secondary/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-secondary"
+                  aria-label={`Strongest week: ${formatMiles(w.miles)}`}
+                >
+                  <Sparkles size={9} strokeWidth={2.5} />
+                  Best
+                </div>
+              )}
               <div className="flex w-full flex-1 items-end">
                 <div
                   className={`w-full rounded-t-md transition-all ${
                     w.miles === 0
                       ? "bg-muted-foreground/10"
-                      : isCurrent
-                        ? "bg-primary"
-                        : "bg-primary/40"
+                      : isBest
+                        ? "bg-secondary"
+                        : isCurrent
+                          ? "bg-primary"
+                          : "bg-primary/40"
                   }`}
                   style={{ height: `${Math.max(pct, w.miles > 0 ? 4 : 2)}%` }}
-                  title={`${formatMiles(w.miles)} — week of ${fmtWeekLabel(w.start)}`}
+                  title={tip}
+                  aria-label={tip}
                 />
               </div>
               <div className="text-[10px] text-text-secondary whitespace-nowrap">
@@ -103,7 +141,9 @@ export function WorkoutChart({ workouts }: { workouts: Workout[] }) {
           );
         })}
       </div>
-
+      {interpretation && (
+        <p className="mt-3 text-xs text-text-secondary">{interpretation}</p>
+      )}
     </div>
   );
 }
