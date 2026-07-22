@@ -131,10 +131,13 @@ export function generateInsights(input: GenerateInput): Insight[] {
       (r) => STATE_BY_CODE[r.state_code]?.name ?? r.state_code,
     );
 
+    let leaderKey: string | null = null;
+
     // 1. Volume leader
     if (byState.length > 0) {
       const first = byState[0];
       const second = byState[1];
+      leaderKey = first.key;
       let headline = `${first.label} leads ${filterLabel === "all activity" ? "the country" : filterLabel} with ${fmtMi(first.miles)} across ${first.count} logged ${first.count === 1 ? "activity" : "activities"}.`;
       let close = false;
       if (second) {
@@ -157,37 +160,38 @@ export function generateInsights(input: GenerateInput): Insight[] {
       });
     }
 
-    // 2. Efficiency (contributors or per-activity)
-    const usingContributors = byState.some((s) => s.contributors.size > 0);
-    const eligible = byState.filter((s) =>
-      usingContributors ? s.contributors.size >= 5 : s.count >= 5,
-    );
-    if (eligible.length >= 3) {
-      const per = (s: RegionAgg) =>
-        usingContributors ? s.miles / s.contributors.size : s.miles / s.count;
-      const med = median(eligible.map(per));
-      const ranked = [...eligible].sort((a, b) => per(b) - per(a));
-      const top = ranked[0];
-      const ratio = per(top) / Math.max(med, 0.0001);
-      if (ratio >= 1.4) {
-        const leaderMiles = byState[0];
-        const headline = usingContributors
-          ? `${top.label} punches above its size: ${per(top).toFixed(1)} miles per logger, ${ratio.toFixed(1)}× the national median.`
-          : `${top.label} averages ${per(top).toFixed(1)} miles per logged activity — ${ratio.toFixed(1)}× the national median of ${med.toFixed(1)}.`;
-        const supporting =
-          !usingContributors && leaderMiles && leaderMiles.key !== top.key
-            ? `${leaderMiles.label} averages ${(leaderMiles.miles / leaderMiles.count).toFixed(1)} per logged activity.`
-            : undefined;
-        candidates.push({
-          id: "efficiency",
-          type: "efficiency",
-          eyebrow: "Punching above its weight",
-          headline,
-          supportingText: supporting,
-          icon: "spark",
-          importance: 70 + Math.min(20, (ratio - 1.4) * 20),
-          action: { label: `Explore ${top.label}`, state: top.key },
-        });
+    // 2. Per-logger standout — always distinct users, min 5 loggers, exclude volume leader.
+    const hasContributors = byState.some((s) => s.contributors.size > 0);
+    if (hasContributors) {
+      const eligibleAll = byState.filter((s) => s.contributors.size >= 5);
+      const per = (s: RegionAgg) => s.miles / s.contributors.size;
+      if (eligibleAll.length >= 3) {
+        const med = median(eligibleAll.map(per));
+        // Exclude the volume leader from the standout unless nothing else qualifies.
+        const withoutLeader = eligibleAll.filter((s) => s.key !== leaderKey);
+        const pool = withoutLeader.length > 0 ? withoutLeader : eligibleAll;
+        const ranked = [...pool].sort((a, b) => per(b) - per(a));
+        const top = ranked[0];
+        const ratio = per(top) / Math.max(med, 0.0001);
+        if (ratio >= 1.4) {
+          const rankInMiles = byState.findIndex((s) => s.key === top.key) + 1;
+          const rankSuffix =
+            rankInMiles > 0 && rankInMiles <= 10
+              ? `${top.label} ranks #${rankInMiles} in total miles but`
+              : `${top.label}`;
+          const headline = `${rankSuffix} records ${per(top).toFixed(1)} mi per active logger — ${ratio.toFixed(1)}× the national median of ${med.toFixed(1)} mi.`;
+          const supporting = `${top.contributors.size} active loggers · ${fmtMi(top.miles)} total.`;
+          candidates.push({
+            id: "efficiency",
+            type: "efficiency",
+            eyebrow: "Per-logger standout",
+            headline,
+            supportingText: supporting,
+            icon: "spark",
+            importance: 70 + Math.min(20, (ratio - 1.4) * 20),
+            action: { label: `Explore ${top.label}`, state: top.key },
+          });
+        }
       }
     }
 
@@ -212,7 +216,7 @@ export function generateInsights(input: GenerateInput): Insight[] {
       });
     }
 
-    // 4. Sport skew (only when a single sport is active or when all)
+    // 4. Sport skew (only when a single sport is active)
     if (sports.length === 1) {
       const activeSport = sports[0];
       const nationalAll = allRows.reduce((s, r) => s + Number(r.distance_miles), 0);
@@ -263,10 +267,12 @@ export function generateInsights(input: GenerateInput): Insight[] {
       }
     }
 
-    // 5. Momentum
+    // 5. Momentum — exclude the volume leader unless it's the only qualifier.
     const trends = computeTrends(filteredRows, (r) => r.state_code);
-    // recompute recent/prior deltas for magnitude
-    const stateChange = new Map<string, { pct: number; recentCount: number }>();
+    const stateChange = new Map<
+      string,
+      { pct: number; recentMiles: number; priorMiles: number; recentCount: number }
+    >();
     {
       let maxT = 0;
       for (const r of filteredRows) {
@@ -297,25 +303,43 @@ export function generateInsights(input: GenerateInput): Insight[] {
         const denom = Math.max(b, 1);
         stateChange.set(k, {
           pct: (a - b) / denom,
+          recentMiles: a,
+          priorMiles: b,
           recentCount: recentCount.get(k) ?? 0,
         });
       }
     }
-    let bestUp: { code: string; pct: number } | null = null;
-    let bestDown: { code: string; pct: number } | null = null;
-    for (const [code, { pct, recentCount }] of stateChange) {
-      if (recentCount < 5) continue;
-      if (Math.abs(pct) < 0.1) continue;
-      if (trends.get(code) === "up" && (!bestUp || pct > bestUp.pct)) bestUp = { code, pct };
-      if (trends.get(code) === "down" && (!bestDown || pct < bestDown.pct)) bestDown = { code, pct };
-    }
+    type MomentumPick = { code: string; pct: number; recentMiles: number; priorMiles: number };
+    const pickBest = (dir: "up" | "down", excludeKey: string | null): MomentumPick | null => {
+      let best: MomentumPick | null = null;
+      for (const [code, m] of stateChange) {
+        if (excludeKey && code === excludeKey) continue;
+        if (m.recentCount < 5) continue;
+        if (Math.abs(m.pct) < 0.1 && m.priorMiles > 0) continue;
+        if (trends.get(code) !== dir) continue;
+        if (dir === "up" && (!best || m.pct > best.pct)) {
+          best = { code, pct: m.pct, recentMiles: m.recentMiles, priorMiles: m.priorMiles };
+        }
+        if (dir === "down" && (!best || m.pct < best.pct)) {
+          best = { code, pct: m.pct, recentMiles: m.recentMiles, priorMiles: m.priorMiles };
+        }
+      }
+      return best;
+    };
+    const bestUp = pickBest("up", leaderKey) ?? pickBest("up", null);
+    const bestDown = !bestUp ? pickBest("down", leaderKey) ?? pickBest("down", null) : null;
+
     if (bestUp) {
       const name = STATE_BY_CODE[bestUp.code]?.name ?? bestUp.code;
+      const headline =
+        bestUp.priorMiles > 0
+          ? `${name} logged ${fmtMi(bestUp.recentMiles)} in the last 7 days, up ${fmtPct(bestUp.pct)} from ${fmtMi(bestUp.priorMiles)} the previous 7 days.`
+          : `${name} returned to activity with ${fmtMi(bestUp.recentMiles)} in the last 7 days after a quiet prior week.`;
       candidates.push({
         id: "momentum-up",
         type: "momentum",
         eyebrow: "Recent momentum",
-        headline: `${name} has the strongest recent momentum, up ${fmtPct(bestUp.pct)} from the previous seven days.`,
+        headline,
         icon: "momentum",
         importance: 68 + Math.min(15, bestUp.pct * 30),
         action: { label: `Explore ${name}`, state: bestUp.code },
@@ -326,13 +350,14 @@ export function generateInsights(input: GenerateInput): Insight[] {
         id: "momentum-down",
         type: "momentum",
         eyebrow: "Recent momentum",
-        headline: `${name} slipped ${fmtPct(Math.abs(bestDown.pct))} versus the previous seven days.`,
+        headline: `${name} logged ${fmtMi(bestDown.recentMiles)} in the last 7 days, down ${fmtPct(Math.abs(bestDown.pct))} from ${fmtMi(bestDown.priorMiles)} the previous 7 days.`,
         icon: "momentum",
         importance: 60,
         action: { label: `Explore ${name}`, state: bestDown.code },
       });
     }
   }
+
 
   if (scope.level === "state") {
     const stateName = STATE_BY_CODE[scope.stateCode]?.name ?? scope.stateCode;
