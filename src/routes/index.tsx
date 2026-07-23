@@ -9,6 +9,7 @@ import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
 import { MapLegend } from "@/components/map-legend";
 import { DataInsights } from "@/components/data-insights";
+import { DataTransparency } from "@/components/data-transparency";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
 import { buildInsights } from "@/lib/insights";
