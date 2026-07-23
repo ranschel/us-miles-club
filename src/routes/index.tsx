@@ -9,6 +9,7 @@ import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
 import { MapLegend } from "@/components/map-legend";
 import { DataInsights } from "@/components/data-insights";
+import { DataTransparency } from "@/components/data-transparency";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
 import { buildInsights } from "@/lib/insights";
@@ -116,11 +117,12 @@ function Index() {
     });
   };
 
-  const { data: allRows = [], isLoading } = useQuery({
+  const { data: allRows = [], isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["public-workouts"],
     queryFn: () => fetchWorkouts(["walk", "run", "bike"]),
     staleTime: 60_000,
   });
+
 
   const filtered = useMemo(() => filterSports(allRows, sports), [allRows, sports]);
   const { byState, byCounty } = useMemo(() => aggregate(filtered), [filtered]);
@@ -256,12 +258,13 @@ function Index() {
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
                   />
                   <Stat label="States" value={isLoading ? "…" : String(byState.size)} />
-                  <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
+                  <Stat
+                    label="Workouts"
+                    value={isLoading ? "…" : filtered.length.toLocaleString()}
+                  />
                 </div>
                 <div className="stat-divider mt-6 max-w-lg" />
-                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
-                  Updated in real time · miles + logs
-                </p>
+                <DataTransparency updatedAt={dataUpdatedAt || null} />
               </div>
             </div>
 
@@ -283,8 +286,13 @@ function Index() {
                 </div>
               </div>
 
+              <p className="mono text-center text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+                Select a state to view its counties and rankings.
+              </p>
+
               <MapLegend />
             </div>
+
 
           </section>
         ) : (
