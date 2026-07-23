@@ -103,7 +103,7 @@
   --info: #5EEAFF;
 
   /* Neon amber ramp for map heat */
-  --map-empty: rgba(255, 255, 255, 0.04);
+  --map-empty: rgba(107, 111, 132, 0.18);
   --map-1: rgba(255, 107, 53, 0.18);
   --map-2: rgba(255, 107, 53, 0.34);
   --map-3: rgba(255, 107, 53, 0.55);
