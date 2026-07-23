@@ -283,9 +283,7 @@ function Index() {
                 </div>
               </div>
 
-              <p className="mt-1 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
-                Brighter states = more miles logged · click to zoom
-              </p>
+              <MapLegend />
             </div>
 
           </section>
