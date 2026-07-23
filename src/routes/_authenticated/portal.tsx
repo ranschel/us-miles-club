@@ -147,6 +147,114 @@ function Portal() {
 
   const needsName = !profile?.full_name?.trim();
 
+  if (initialError || timedOut) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
+        <div
+          role="alert"
+          className="card border-destructive/40 text-center ring-2 ring-destructive/20"
+        >
+          <AlertTriangle
+            size={36}
+            strokeWidth={1.75}
+            className="mx-auto mb-3 text-destructive"
+            aria-hidden
+          />
+          <h1 className="text-2xl font-black tracking-tight">
+            We couldn't load your portal
+          </h1>
+          <p className="mt-2 text-text-secondary">
+            Your workout data is safe — please try again.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                setTimedOut(false);
+                refetchProfile();
+                refetchWorkouts();
+              }}
+            >
+              <RefreshCw size={16} /> Try again
+            </button>
+            <Link to="/" className="btn btn-ghost">
+              <Home size={16} /> Return to home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (initialLoading || !profile) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-6 flex items-center gap-3"
+        >
+          <RefreshCw
+            size={18}
+            strokeWidth={2}
+            className="animate-spin text-primary"
+            aria-hidden
+          />
+          <span className="text-base font-semibold text-foreground">
+            Loading your portal…
+          </span>
+        </div>
+
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div className="flex-1 min-w-[220px]">
+            <div className="skeleton h-9 w-48" />
+            <div className="skeleton mt-3 h-4 w-64" />
+          </div>
+          <div className="flex gap-2">
+            <div className="skeleton h-10 w-32" />
+            <div className="skeleton h-10 w-24" />
+          </div>
+        </div>
+
+        <div className="card mb-6">
+          <div className="skeleton h-5 w-32" />
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="skeleton h-10 w-full" />
+            <div className="skeleton h-10 w-full" />
+          </div>
+        </div>
+
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="card">
+              <div className="skeleton h-3 w-24" />
+              <div className="skeleton mt-3 h-8 w-20" />
+            </div>
+          ))}
+        </div>
+
+        <div className="card mb-6">
+          <div className="skeleton h-5 w-40" />
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="skeleton h-24 w-full" />
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="skeleton h-5 w-24" />
+          <div className="mt-4 space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="skeleton h-16 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
