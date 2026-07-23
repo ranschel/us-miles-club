@@ -117,11 +117,12 @@ function Index() {
     });
   };
 
-  const { data: allRows = [], isLoading } = useQuery({
+  const { data: allRows = [], isLoading, dataUpdatedAt } = useQuery({
     queryKey: ["public-workouts"],
     queryFn: () => fetchWorkouts(["walk", "run", "bike"]),
     staleTime: 60_000,
   });
+
 
   const filtered = useMemo(() => filterSports(allRows, sports), [allRows, sports]);
   const { byState, byCounty } = useMemo(() => aggregate(filtered), [filtered]);
