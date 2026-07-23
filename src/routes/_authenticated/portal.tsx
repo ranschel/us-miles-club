@@ -2,7 +2,22 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save, ShieldCheck, Copy, Check, AlertTriangle, RefreshCw, Home } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Footprints,
+  Bike,
+  PersonStanding,
+  MapPin,
+  Pencil,
+  Save,
+  ShieldCheck,
+  Copy,
+  Check,
+  AlertTriangle,
+  RefreshCw,
+  Home,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SportFilter } from "@/components/sport-filter";
@@ -35,16 +50,19 @@ import { ActivityFootprint } from "@/components/activity-footprint";
 import { generatePersonalInsights } from "@/lib/personal-insights";
 import type { Sport } from "@/lib/public-workouts";
 
-
 export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
   head: () => ({ meta: [{ title: "My portal — US Miles Club" }] }),
 });
 
 const SportIcon = ({ s }: { s: "walk" | "run" | "bike" }) =>
-  s === "walk" ? <PersonStanding size={18} strokeWidth={2} />
-  : s === "run" ? <Footprints size={18} strokeWidth={2} />
-  : <Bike size={18} strokeWidth={2} />;
+  s === "walk" ? (
+    <PersonStanding size={18} strokeWidth={2} />
+  ) : s === "run" ? (
+    <Footprints size={18} strokeWidth={2} />
+  ) : (
+    <Bike size={18} strokeWidth={2} />
+  );
 
 function Portal() {
   const navigate = useNavigate();
@@ -76,13 +94,22 @@ function Portal() {
     };
   }, [ensureCode]);
 
-
-  const { data = [], isLoading, error, refetch: refetchWorkouts } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+    refetch: refetchWorkouts,
+  } = useQuery({
     queryKey: ["my-workouts"],
     queryFn: () => list(),
   });
 
-  const { data: profile, isLoading: profileLoading, error: profileError, refetch: refetchProfile } = useQuery({
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    error: profileError,
+    refetch: refetchProfile,
+  } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getProfile(),
   });
@@ -104,7 +131,6 @@ function Portal() {
     const id = window.setTimeout(() => setTimedOut(true), 10_000);
     return () => window.clearTimeout(id);
   }, [initialLoading]);
-
 
   const pendingDelete = pendingDeleteId ? data.find((w) => w.id === pendingDeleteId) : null;
 
@@ -150,22 +176,10 @@ function Portal() {
   if (initialError || timedOut) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
-        <div
-          role="alert"
-          className="card border-destructive/40 text-center ring-2 ring-destructive/20"
-        >
-          <AlertTriangle
-            size={36}
-            strokeWidth={1.75}
-            className="mx-auto mb-3 text-destructive"
-            aria-hidden
-          />
-          <h1 className="text-2xl font-black tracking-tight">
-            We couldn't load your portal
-          </h1>
-          <p className="mt-2 text-text-secondary">
-            Your workout data is safe — please try again.
-          </p>
+        <div role="alert" className="card border-destructive/40 text-center ring-2 ring-destructive/20">
+          <AlertTriangle size={36} strokeWidth={1.75} className="mx-auto mb-3 text-destructive" aria-hidden />
+          <h1 className="text-2xl font-black tracking-tight">We couldn't load your portal</h1>
+          <p className="mt-2 text-text-secondary">Your workout data is safe — please try again.</p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button
               type="button"
@@ -190,20 +204,9 @@ function Portal() {
   if (initialLoading || !profile) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
-        <div
-          role="status"
-          aria-live="polite"
-          className="mb-6 flex items-center gap-3"
-        >
-          <RefreshCw
-            size={18}
-            strokeWidth={2}
-            className="animate-spin text-primary"
-            aria-hidden
-          />
-          <span className="text-base font-semibold text-foreground">
-            Loading your portal…
-          </span>
+        <div role="status" aria-live="polite" className="mb-6 flex items-center gap-3">
+          <RefreshCw size={18} strokeWidth={2} className="animate-spin text-primary" aria-hidden />
+          <span className="text-base font-semibold text-foreground">Loading your portal…</span>
         </div>
 
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -259,20 +262,11 @@ function Portal() {
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tight">
-            {greeting ? `Hi, ${greeting}` : "My portal"}
-          </h1>
-          <p className="mt-1 text-text-secondary">
-            Your logged miles and their impact on your county.
-          </p>
+          <h1 className="text-4xl font-black tracking-tight">{greeting ? `Hi, ${greeting}` : "My portal"}</h1>
+          <p className="mt-1 text-text-secondary">Your logged miles and their impact on your county.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <ShareRankCard
-            name={profile?.full_name ?? ""}
-            totalMiles={total}
-            rankings={rankings}
-            sports={sportFilter}
-          />
+          <ShareRankCard name={profile?.full_name ?? ""} totalMiles={total} rankings={rankings} sports={sportFilter} />
           <Link to="/log" className="btn btn-primary">
             <Plus size={18} /> Log workout
           </Link>
@@ -281,7 +275,6 @@ function Portal() {
           </button>
         </div>
       </div>
-
 
       {needsName && (
         <div className="card mb-6 border-primary/40 ring-2 ring-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.6)]">
@@ -293,8 +286,8 @@ function Portal() {
               </div>
               <h2 className="text-2xl font-black tracking-tight">Add your name to the leaderboards</h2>
               <p className="mt-1 text-text-secondary">
-                Your name is how your miles show up when your city or county climbs the rankings.
-                Without it, your effort is anonymous.
+                Your name is how your miles show up when your city or county climbs the rankings. Without it, your
+                effort is anonymous.
               </p>
             </div>
           </div>
@@ -320,28 +313,186 @@ function Portal() {
               onChange={(e) => setNameDraft(e.target.value)}
               aria-label="Full name"
             />
-            <button
-              type="submit"
-              className="btn btn-primary text-base"
-              disabled={nameMut.isPending}
-            >
+            <button type="submit" className="btn btn-primary text-base" disabled={nameMut.isPending}>
               <Save size={18} /> {nameMut.isPending ? "Saving…" : "Save my name"}
             </button>
           </form>
         </div>
       )}
 
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="card">
+          <div className="text-xs uppercase tracking-wide text-text-secondary">Total miles</div>
+          <div className="mono text-3xl font-bold mt-1">{formatMiles(total)}</div>
+        </div>
+        <div className="card">
+          <div className="text-xs uppercase tracking-wide text-text-secondary">Workouts</div>
+          <div className="mono text-3xl font-bold mt-1">{data.length}</div>
+        </div>
+        <div className="card">
+          <div className="text-xs uppercase tracking-wide text-text-secondary">Last logged</div>
+          <div className="mono text-lg font-bold mt-1">{data[0] ? formatDateTime(data[0].performed_at) : "—"}</div>
+        </div>
+        <MonthlyGoal workouts={data} currentGoal={profile?.monthly_goal_miles ?? null} />
+      </div>
 
-      {/* Profile card */}
+      <PersonalInsights
+        insights={generatePersonalInsights({
+          workouts: data,
+          rankings,
+          monthlyGoal: profile?.monthly_goal_miles ?? null,
+        })}
+      />
+
+      <BadgesPanel workouts={data} />
+
+      <WorkoutChart workouts={data} />
+
+      <ActivityFootprint workouts={data} sports={sportFilter} />
+
       <div className="card mb-6">
-        <h2 className="text-xl font-bold">Account</h2>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold">Your rankings</h2>
+            <p className="text-sm text-text-secondary">Based on where you've logged the most miles.</p>
+          </div>
+          <SportFilter value={sportFilter} onChange={setSportFilter} context="rankings" />
+        </div>
+        {rankings ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">Individual</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.individualRank ? `#${rankings.individualRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalIndividuals.toLocaleString()} people
+              </div>
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">City</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.cityRank ? `#${rankings.cityRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">of {rankings.totalCities.toLocaleString()} cities</div>
+              {rankings.cityName && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.cityName}</div>
+              )}
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">County</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.countyRank ? `#${rankings.countyRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">
+                of {rankings.totalCounties.toLocaleString()} counties
+              </div>
+              {rankings.countyName && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.countyName} County</div>
+              )}
+            </div>
+            <div className="rounded-xl bg-muted p-4">
+              <div className="text-xs uppercase tracking-wide text-text-secondary">State</div>
+              <div className="mt-1 text-3xl font-black tracking-tight">
+                {rankings.stateRank ? `#${rankings.stateRank}` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-text-secondary">of {rankings.totalStates.toLocaleString()} states</div>
+              {rankings.stateCode && (
+                <div className="mt-1 truncate text-xs font-medium text-foreground">{stateName(rankings.stateCode)}</div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="rounded-xl bg-muted p-4">
+                <div className="skeleton mb-2 h-3 w-20" />
+                <div className="skeleton h-8 w-16" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="card p-0 overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h2 className="text-xl font-bold">History</h2>
+          <p className="text-sm text-text-secondary">Newest first. Edit to correct, delete to remove.</p>
+        </div>
+
+        {isLoading ? (
+          <div className="p-4 space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="skeleton h-16" />
+            ))}
+          </div>
+        ) : error ? (
+          <p className="p-4 text-sm text-destructive">Couldn't load your workouts. Try refreshing.</p>
+        ) : data.length === 0 ? (
+          <div className="p-8 text-center">
+            <MapPin size={32} strokeWidth={1.75} className="mx-auto text-text-secondary mb-3" />
+            <p className="font-bold">No workouts yet.</p>
+            <p className="text-sm text-text-secondary mt-1">
+              Log your first walk, run, or ride to put your county on the board.
+            </p>
+            <Link to="/log" className="btn btn-primary mt-4">
+              <Plus size={18} /> Log workout
+            </Link>
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {data.map((w) => (
+              <li key={w.id} className="flex items-center gap-3 p-4 transition-colors hover:bg-muted">
+                <span
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-primary"
+                  aria-hidden
+                >
+                  <SportIcon s={w.sport} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold">
+                    {sportLabel(w.sport)} · {formatMiles(Number(w.distance_miles))}
+                  </div>
+                  <div className="text-xs text-text-secondary truncate">
+                    {w.city}, {w.county_name} County, {stateName(w.state_code)}
+                  </div>
+                  <div className="mono text-xs text-text-secondary mt-0.5">{formatDateTime(w.performed_at)}</div>
+                </div>
+                <Link
+                  to="/log"
+                  search={{ id: w.id }}
+                  className="btn btn-ghost"
+                  aria-label="Edit workout"
+                  style={{ minWidth: 44 }}
+                >
+                  <Pencil size={18} strokeWidth={1.75} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setPendingDeleteId(w.id)}
+                  className="btn btn-ghost"
+                  aria-label="Delete workout"
+                  style={{ minWidth: 44 }}
+                >
+                  <Trash2 size={18} strokeWidth={1.75} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Secondary account settings */}
+      <div className="card mt-6">
+        <h2 className="text-xl font-bold">Account settings</h2>
         <p className="text-sm text-text-secondary">
-          Your name shows up on your portal and — if your city or county reaches the top —
-          the leaderboards.
+          Update how your name appears across your portal and the leaderboards.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="field-label" htmlFor="profile-name">Full name</label>
+            <label className="field-label" htmlFor="profile-name">
+              Full name
+            </label>
             {editingName ? (
               <form
                 className="flex gap-2"
@@ -381,7 +532,9 @@ function Portal() {
             ) : (
               <div className="flex items-center gap-2">
                 <span className="font-bold">
-                  {profile?.full_name?.trim() ? profile.full_name : (
+                  {profile?.full_name?.trim() ? (
+                    profile.full_name
+                  ) : (
                     <span className="text-text-secondary italic">No name set yet</span>
                   )}
                 </span>
@@ -397,7 +550,9 @@ function Portal() {
             )}
           </div>
           <div>
-            <label className="field-label" htmlFor="profile-email">Email</label>
+            <label className="field-label" htmlFor="profile-email">
+              Email
+            </label>
             <input
               id="profile-email"
               type="email"
@@ -407,194 +562,14 @@ function Portal() {
               className="field-input"
             />
             <p className="mt-1 text-xs text-text-secondary">
-              Your email is locked. Contact support to change it.
+              Your email is locked.{" "}
+              <Link to="/contact" className="font-semibold text-primary hover:underline">
+                Contact support
+              </Link>{" "}
+              to change it.
             </p>
           </div>
         </div>
-      </div>
-
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="card">
-          <div className="text-xs uppercase tracking-wide text-text-secondary">Total miles</div>
-          <div className="mono text-3xl font-bold mt-1">{formatMiles(total)}</div>
-        </div>
-        <div className="card">
-          <div className="text-xs uppercase tracking-wide text-text-secondary">Workouts</div>
-          <div className="mono text-3xl font-bold mt-1">{data.length}</div>
-        </div>
-        <div className="card">
-          <div className="text-xs uppercase tracking-wide text-text-secondary">Last logged</div>
-          <div className="mono text-lg font-bold mt-1">
-            {data[0] ? formatDateTime(data[0].performed_at) : "—"}
-          </div>
-        </div>
-        <MonthlyGoal
-          workouts={data}
-          currentGoal={profile?.monthly_goal_miles ?? null}
-        />
-      </div>
-
-
-      <PersonalInsights
-        insights={generatePersonalInsights({
-          workouts: data,
-          rankings,
-          monthlyGoal: profile?.monthly_goal_miles ?? null,
-        })}
-      />
-
-      <BadgesPanel workouts={data} />
-
-      <WorkoutChart workouts={data} />
-
-      <ActivityFootprint workouts={data} sports={sportFilter} />
-
-
-      <div className="card mb-6">
-
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold">Your rankings</h2>
-            <p className="text-sm text-text-secondary">
-              Based on where you've logged the most miles.
-            </p>
-          </div>
-          <SportFilter value={sportFilter} onChange={setSportFilter} context="rankings" />
-        </div>
-        {rankings ? (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl bg-muted p-4">
-              <div className="text-xs uppercase tracking-wide text-text-secondary">Individual</div>
-              <div className="mt-1 text-3xl font-black tracking-tight">
-                {rankings.individualRank ? `#${rankings.individualRank}` : "—"}
-              </div>
-              <div className="mt-1 text-xs text-text-secondary">
-                of {rankings.totalIndividuals.toLocaleString()} people
-              </div>
-            </div>
-            <div className="rounded-xl bg-muted p-4">
-              <div className="text-xs uppercase tracking-wide text-text-secondary">City</div>
-              <div className="mt-1 text-3xl font-black tracking-tight">
-                {rankings.cityRank ? `#${rankings.cityRank}` : "—"}
-              </div>
-              <div className="mt-1 text-xs text-text-secondary">
-                of {rankings.totalCities.toLocaleString()} cities
-              </div>
-              {rankings.cityName && (
-                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.cityName}</div>
-              )}
-            </div>
-            <div className="rounded-xl bg-muted p-4">
-              <div className="text-xs uppercase tracking-wide text-text-secondary">County</div>
-              <div className="mt-1 text-3xl font-black tracking-tight">
-                {rankings.countyRank ? `#${rankings.countyRank}` : "—"}
-              </div>
-              <div className="mt-1 text-xs text-text-secondary">
-                of {rankings.totalCounties.toLocaleString()} counties
-              </div>
-              {rankings.countyName && (
-                <div className="mt-1 truncate text-xs font-medium text-foreground">{rankings.countyName} County</div>
-              )}
-            </div>
-            <div className="rounded-xl bg-muted p-4">
-              <div className="text-xs uppercase tracking-wide text-text-secondary">State</div>
-              <div className="mt-1 text-3xl font-black tracking-tight">
-                {rankings.stateRank ? `#${rankings.stateRank}` : "—"}
-              </div>
-              <div className="mt-1 text-xs text-text-secondary">
-                of {rankings.totalStates.toLocaleString()} states
-              </div>
-              {rankings.stateCode && (
-                <div className="mt-1 truncate text-xs font-medium text-foreground">{stateName(rankings.stateCode)}</div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="rounded-xl bg-muted p-4">
-                <div className="skeleton mb-2 h-3 w-20" />
-                <div className="skeleton h-8 w-16" />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="card p-0 overflow-hidden">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-xl font-bold">History</h2>
-          <p className="text-sm text-text-secondary">Newest first. Edit to correct, delete to remove.</p>
-        </div>
-
-        {isLoading ? (
-          <div className="p-4 space-y-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="skeleton h-16" />
-            ))}
-          </div>
-        ) : error ? (
-          <p className="p-4 text-sm text-destructive">
-            Couldn't load your workouts. Try refreshing.
-          </p>
-        ) : data.length === 0 ? (
-          <div className="p-8 text-center">
-            <MapPin
-              size={32}
-              strokeWidth={1.75}
-              className="mx-auto text-text-secondary mb-3"
-            />
-            <p className="font-bold">No workouts yet.</p>
-            <p className="text-sm text-text-secondary mt-1">
-              Log your first walk, run, or ride to put your county on the board.
-            </p>
-            <Link to="/log" className="btn btn-primary mt-4">
-              <Plus size={18} /> Log workout
-            </Link>
-          </div>
-        ) : (
-          <ul className="divide-y divide-border">
-            {data.map((w) => (
-              <li key={w.id} className="flex items-center gap-3 p-4 transition-colors hover:bg-muted">
-                <span
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-primary"
-                  aria-hidden
-                >
-                  <SportIcon s={w.sport} />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold">
-                    {sportLabel(w.sport)} · {formatMiles(Number(w.distance_miles))}
-                  </div>
-                  <div className="text-xs text-text-secondary truncate">
-                    {w.city}, {w.county_name} County, {stateName(w.state_code)}
-                  </div>
-                  <div className="mono text-xs text-text-secondary mt-0.5">
-                    {formatDateTime(w.performed_at)}
-                  </div>
-                </div>
-                <Link
-                  to="/log"
-                  search={{ id: w.id }}
-                  className="btn btn-ghost"
-                  aria-label="Edit workout"
-                  style={{ minWidth: 44 }}
-                >
-                  <Pencil size={18} strokeWidth={1.75} />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setPendingDeleteId(w.id)}
-                  className="btn btn-ghost"
-                  aria-label="Delete workout"
-                  style={{ minWidth: 44 }}
-                >
-                  <Trash2 size={18} strokeWidth={1.75} />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
       <AlertDialog
@@ -652,14 +627,11 @@ function Portal() {
             <AlertDialogDescription asChild>
               <div className="space-y-3 text-left">
                 <p>
-                  Write this code down or save it in a password manager. If you ever
-                  lose access to your email, this is the <strong>only</strong> way to
-                  recover your account.
+                  Write this code down or save it in a password manager. If you ever lose access to your email, this is
+                  the <strong>only</strong> way to recover your account.
                 </p>
                 <div className="rounded-lg border border-border bg-muted p-4 text-center">
-                  <div className="mono text-2xl font-bold tracking-widest break-all">
-                    {recoveryCode}
-                  </div>
+                  <div className="mono text-2xl font-bold tracking-widest break-all">{recoveryCode}</div>
                 </div>
                 <button
                   type="button"
@@ -680,8 +652,7 @@ function Portal() {
                   {copied ? "Copied" : "Copy code"}
                 </button>
                 <p className="text-xs text-text-secondary">
-                  We only store a one-way hash of this code, so we can't show it to
-                  you again. Treat it like a password.
+                  We only store a one-way hash of this code, so we can't show it to you again. Treat it like a password.
                 </p>
                 <label className="flex items-start gap-2 text-sm">
                   <input
@@ -710,6 +681,5 @@ function Portal() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-
   );
 }
