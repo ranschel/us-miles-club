@@ -258,12 +258,13 @@ function Index() {
                     value={isLoading ? "…" : formatMiles(totalMiles).replace(" mi", "")}
                   />
                   <Stat label="States" value={isLoading ? "…" : String(byState.size)} />
-                  <Stat label="Workouts" value={isLoading ? "…" : String(filtered.length)} />
+                  <Stat
+                    label="Workouts"
+                    value={isLoading ? "…" : filtered.length.toLocaleString()}
+                  />
                 </div>
                 <div className="stat-divider mt-6 max-w-lg" />
-                <p className="mono mt-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-text-muted max-w-lg">
-                  Updated in real time · miles + logs
-                </p>
+                <DataTransparency updatedAt={dataUpdatedAt || null} />
               </div>
             </div>
 
