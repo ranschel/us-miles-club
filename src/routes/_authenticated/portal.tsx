@@ -77,12 +77,12 @@ function Portal() {
   }, [ensureCode]);
 
 
-  const { data = [], isLoading, error } = useQuery({
+  const { data = [], isLoading, error, refetch: refetchWorkouts } = useQuery({
     queryKey: ["my-workouts"],
     queryFn: () => list(),
   });
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: profileLoading, error: profileError, refetch: refetchProfile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getProfile(),
   });
@@ -91,6 +91,20 @@ function Portal() {
     queryKey: ["my-rankings", sportFilter],
     queryFn: () => getRankings({ data: { sports: sportFilter } }),
   });
+
+  const initialLoading = profileLoading || isLoading;
+  const initialError = profileError || error;
+
+  const [timedOut, setTimedOut] = useState(false);
+  useEffect(() => {
+    if (!initialLoading) {
+      setTimedOut(false);
+      return;
+    }
+    const id = window.setTimeout(() => setTimedOut(true), 10_000);
+    return () => window.clearTimeout(id);
+  }, [initialLoading]);
+
 
   const pendingDelete = pendingDeleteId ? data.find((w) => w.id === pendingDeleteId) : null;
 
