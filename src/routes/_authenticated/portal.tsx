@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save, ShieldCheck, Copy, Check } from "lucide-react";
+import { Trash2, Plus, Footprints, Bike, PersonStanding, MapPin, Pencil, Save, ShieldCheck, Copy, Check, AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SportFilter } from "@/components/sport-filter";
