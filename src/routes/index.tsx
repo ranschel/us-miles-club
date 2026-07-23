@@ -286,8 +286,13 @@ function Index() {
                 </div>
               </div>
 
+              <p className="mono text-center text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
+                Select a state to view its counties and rankings.
+              </p>
+
               <MapLegend />
             </div>
+
 
           </section>
         ) : (
