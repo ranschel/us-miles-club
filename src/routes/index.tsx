@@ -7,6 +7,7 @@ import { ArrowLeft, Trophy } from "lucide-react";
 import { SportFilter } from "@/components/sport-filter";
 import { NationalMap, CountyMap } from "@/components/us-map";
 import { CityList, LeaderboardList } from "@/components/leaderboard-list";
+import { MapLegend } from "@/components/map-legend";
 import { DataInsights } from "@/components/data-insights";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
 import { aggregate, citiesForCounty, computeTrends, filterSports } from "@/lib/aggregate";
@@ -282,9 +283,7 @@ function Index() {
                 </div>
               </div>
 
-              <p className="mt-1 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-text-muted">
-                Brighter states = more miles logged · click to zoom
-              </p>
+              <MapLegend />
             </div>
 
           </section>
