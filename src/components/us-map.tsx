@@ -45,10 +45,12 @@ const usaPath = geoPath(usaProjection);
 export function NationalMap({
   byState,
   selected,
+  highlighted,
   onSelect,
 }: {
   byState: Map<string, StateAgg>;
   selected: string | null;
+  highlighted?: string | null;
   onSelect: (code: string | null) => void;
 }) {
   const maxMiles = useMemo(() => {
@@ -76,7 +78,7 @@ export function NationalMap({
             const miles = agg?.totalMiles ?? 0;
             const lvl = level(miles);
             const d = usaPath(f) ?? "";
-            const isSelected = selected != null && selected === code;
+            const isSelected = (selected != null && selected === code) || (highlighted != null && highlighted === code);
             const label = info ? info.name : "Unknown region";
             const stats = agg
               ? `${formatMiles(miles)} across ${agg.count} workouts`
