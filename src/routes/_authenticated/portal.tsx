@@ -55,6 +55,14 @@ export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({ meta: [{ title: "My portal — US Miles Club" }] }),
 });
 
+function maskEmail(email: string): string {
+  if (!email) return "";
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  const first = local.charAt(0);
+  return `${first}${"•".repeat(3)}@${domain}`;
+}
+
 const SportIcon = ({ s }: { s: "walk" | "run" | "bike" }) =>
   s === "walk" ? (
     <PersonStanding size={18} strokeWidth={2} />
@@ -555,18 +563,14 @@ function Portal() {
             </label>
             <input
               id="profile-email"
-              type="email"
+              type="text"
               readOnly
               disabled
-              value={profile?.email ?? ""}
+              value={maskEmail(profile?.email ?? "")}
               className="field-input"
             />
             <p className="mt-1 text-xs text-text-secondary">
-              Your email is locked.{" "}
-              <Link to="/contact" className="font-semibold text-primary hover:underline">
-                Contact support
-              </Link>{" "}
-              to change it.
+              Email is tied to your account and can't be edited here.
             </p>
           </div>
         </div>

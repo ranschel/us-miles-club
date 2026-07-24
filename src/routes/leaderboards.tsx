@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
+import { LeaderboardBars } from "@/components/leaderboard-bars";
+import { NationalMap } from "@/components/us-map";
+import { MapLegend } from "@/components/map-legend";
 import { DataInsights } from "@/components/data-insights";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
@@ -41,6 +44,7 @@ export const Route = createFileRoute("/leaderboards")({
 function Leaderboards() {
   const navigate = useNavigate();
   const [sports, setSports] = useState<Sport[]>(["walk", "run", "bike"]);
+  const [highlighted, setHighlighted] = useState<string | null>(null);
 
   const goToState = (code: string) =>
     navigate({ to: "/", search: { state: code, from: "leaderboards" } as never });
@@ -132,15 +136,19 @@ function Leaderboards() {
         <DataInsights insights={insights} sports={sports} loading={isLoading} />
       </div>
 
-      <Tabs defaultValue="states" className="w-full">
-
+      <Tabs
+        defaultValue="states"
+        className="w-full"
+        onValueChange={() => setHighlighted(null)}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="states">States</TabsTrigger>
           <TabsTrigger value="counties">Counties</TabsTrigger>
           <TabsTrigger value="cities">Cities</TabsTrigger>
         </TabsList>
+
         <TabsContent value="states">
-          <div className="max-w-2xl">
+          <div className="grid gap-6 lg:grid-cols-[minmax(320px,42%)_1fr] lg:items-start">
             <LeaderboardList
               title="Top 10 States"
               items={topStates}
@@ -150,11 +158,32 @@ function Leaderboards() {
               topN={10}
               onSelect={goToState}
               clickHint={(it) => `Click to open ${it.label}'s county map and cities.`}
+              highlightedKey={highlighted}
+              onHighlight={setHighlighted}
             />
+            <div className="glass flex flex-col gap-3 p-4 md:p-5">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-base font-bold">National heat map</h3>
+                <span className="mono text-[0.65rem] uppercase tracking-[0.16em] text-text-secondary">
+                  Shaded by total miles
+                </span>
+              </div>
+              <div className="flex-1">
+                <NationalMap
+                  byState={byState}
+                  selected={null}
+                  highlighted={highlighted}
+                  onSelect={(code) => code && goToState(code)}
+                />
+
+              </div>
+              <MapLegend />
+            </div>
           </div>
         </TabsContent>
+
         <TabsContent value="counties">
-          <div className="max-w-2xl">
+          <div className="grid gap-6 lg:grid-cols-[minmax(320px,42%)_1fr] lg:items-start">
             <LeaderboardList
               title="Top 10 Counties"
               items={topCounties}
@@ -164,11 +193,22 @@ function Leaderboards() {
               topN={10}
               onSelect={goToCounty}
               clickHint={(it) => `Click to open the ${it.label} map and city rankings.`}
+              highlightedKey={highlighted}
+              onHighlight={setHighlighted}
+            />
+            <LeaderboardBars
+              title="Top counties by miles"
+              items={topCounties.slice(0, 10)}
+              loading={isLoading}
+              highlightedKey={highlighted}
+              onHighlight={setHighlighted}
+              onSelect={goToCounty}
             />
           </div>
         </TabsContent>
+
         <TabsContent value="cities">
-          <div className="max-w-2xl">
+          <div className="grid gap-6 lg:grid-cols-[minmax(320px,42%)_1fr] lg:items-start">
             <LeaderboardList
               title="Top 10 Cities"
               items={topCities}
@@ -178,10 +218,19 @@ function Leaderboards() {
               topN={10}
               onSelect={goToCity}
               clickHint={(it) => `Click to open ${it.label} on its county map.`}
+              highlightedKey={highlighted}
+              onHighlight={setHighlighted}
+            />
+            <LeaderboardBars
+              title="Top cities by miles"
+              items={topCities.slice(0, 10)}
+              loading={isLoading}
+              highlightedKey={highlighted}
+              onHighlight={setHighlighted}
+              onSelect={goToCity}
             />
           </div>
         </TabsContent>
-
       </Tabs>
     </div>
   );

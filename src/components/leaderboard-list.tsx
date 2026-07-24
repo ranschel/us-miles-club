@@ -87,6 +87,8 @@ export function LeaderboardList({
   searchable = false,
   searchPlaceholder = "Search",
   topN = 20,
+  highlightedKey,
+  onHighlight,
 }: {
   title: string;
   items: { key: string; label: string; sub?: string; miles: number; count: number; trend?: Trend }[];
@@ -97,6 +99,8 @@ export function LeaderboardList({
   searchable?: boolean;
   searchPlaceholder?: string;
   topN?: number;
+  highlightedKey?: string | null;
+  onHighlight?: (key: string | null) => void;
 }) {
   const [q, setQ] = useState("");
   const query = q.trim().toLowerCase();
@@ -150,11 +154,12 @@ export function LeaderboardList({
             {filtered.map((it, i) => {
               const rank = query ? items.indexOf(it) + 1 : i + 1;
               const clickable = !!onSelect;
+              const isHighlighted = highlightedKey === it.key;
               const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                 clickable
                   ? "hover:bg-[rgba(94,234,255,0.08)] hover:ring-1 hover:ring-[rgba(94,234,255,0.35)] cursor-pointer"
                   : "hover:bg-white/[0.04]"
-              } ${i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
+              } ${isHighlighted ? "bg-[rgba(94,234,255,0.12)] ring-1 ring-[rgba(94,234,255,0.5)]" : i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
               const content = (
                 <>
                   <span className="mono w-8 text-xs font-semibold text-secondary">
@@ -206,7 +211,11 @@ export function LeaderboardList({
                 </>
               );
               return (
-                <li key={it.key}>
+                <li
+                  key={it.key}
+                  onMouseEnter={onHighlight ? () => onHighlight(it.key) : undefined}
+                  onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+                >
                   {clickable ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -214,6 +223,8 @@ export function LeaderboardList({
                           type="button"
                           className={rowCls}
                           onClick={() => onSelect!(it.key)}
+                          onFocus={onHighlight ? () => onHighlight(it.key) : undefined}
+                          onBlur={onHighlight ? () => onHighlight(null) : undefined}
                           aria-label={clickHint ? clickHint(it) : defaultHint(it)}
                         >
                           {content}
