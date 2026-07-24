@@ -44,6 +44,7 @@ export const Route = createFileRoute("/leaderboards")({
 function Leaderboards() {
   const navigate = useNavigate();
   const [sports, setSports] = useState<Sport[]>(["walk", "run", "bike"]);
+  const [highlighted, setHighlighted] = useState<string | null>(null);
 
   const goToState = (code: string) =>
     navigate({ to: "/", search: { state: code, from: "leaderboards" } as never });
