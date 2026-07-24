@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 
 import { SportFilter } from "@/components/sport-filter";
 import { LeaderboardList } from "@/components/leaderboard-list";
+import { LeaderboardBars } from "@/components/leaderboard-bars";
+import { NationalMap } from "@/components/us-map";
+import { MapLegend } from "@/components/map-legend";
 import { DataInsights } from "@/components/data-insights";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { fetchWorkouts, type Sport } from "@/lib/public-workouts";
