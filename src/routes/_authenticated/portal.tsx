@@ -55,6 +55,14 @@ export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({ meta: [{ title: "My portal — US Miles Club" }] }),
 });
 
+function maskEmail(email: string): string {
+  if (!email) return "";
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  const first = local.charAt(0);
+  return `${first}${"•".repeat(3)}@${domain}`;
+}
+
 const SportIcon = ({ s }: { s: "walk" | "run" | "bike" }) =>
   s === "walk" ? (
     <PersonStanding size={18} strokeWidth={2} />
