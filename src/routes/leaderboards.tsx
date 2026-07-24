@@ -171,9 +171,11 @@ function Leaderboards() {
               <div className="flex-1">
                 <NationalMap
                   byState={byState}
-                  selected={highlighted}
+                  selected={null}
+                  highlighted={highlighted}
                   onSelect={(code) => code && goToState(code)}
                 />
+
               </div>
               <MapLegend />
             </div>
