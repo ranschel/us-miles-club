@@ -223,8 +223,8 @@ function Index() {
                   </span>
                 </h1>
                 <p className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-text-secondary">
-                  Log a walk, run, or ride and watch your county climb the national board. No
-                  trackers, no feeds — just counties and states moving together.
+                  Log every walk, run, or ride. Your miles push your city, county, and state up a
+                  live national leaderboard — that's the whole thing.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   {signedIn ? (
@@ -237,6 +237,39 @@ function Index() {
                     </Link>
                   )}
                 </div>
+
+                <ol className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-text-secondary">
+                  <li className="flex items-center gap-1.5">
+                    <span
+                      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-clip-text text-transparent ring-1 ring-white/15 text-[0.7rem] font-bold"
+                      style={{ backgroundImage: "var(--gradient-primary)" }}
+                    >
+                      1
+                    </span>
+                    Sign up
+                  </li>
+                  <li className="opacity-40" aria-hidden>·</li>
+                  <li className="flex items-center gap-1.5">
+                    <span
+                      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-clip-text text-transparent ring-1 ring-white/15 text-[0.7rem] font-bold"
+                      style={{ backgroundImage: "var(--gradient-primary)" }}
+                    >
+                      2
+                    </span>
+                    Log a workout
+                  </li>
+                  <li className="opacity-40" aria-hidden>·</li>
+                  <li className="flex items-center gap-1.5">
+                    <span
+                      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-clip-text text-transparent ring-1 ring-white/15 text-[0.7rem] font-bold"
+                      style={{ backgroundImage: "var(--gradient-primary)" }}
+                    >
+                      3
+                    </span>
+                    Watch your area climb the map
+                  </li>
+                </ol>
+
 
                 {/* Top states — below the main tagline and CTA */}
                 <div className="mt-8 mb-8">
