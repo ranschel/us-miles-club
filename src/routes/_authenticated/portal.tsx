@@ -555,18 +555,14 @@ function Portal() {
             </label>
             <input
               id="profile-email"
-              type="email"
+              type="text"
               readOnly
               disabled
-              value={profile?.email ?? ""}
+              value={maskEmail(profile?.email ?? "")}
               className="field-input"
             />
             <p className="mt-1 text-xs text-text-secondary">
-              Your email is locked.{" "}
-              <Link to="/contact" className="font-semibold text-primary hover:underline">
-                Contact support
-              </Link>{" "}
-              to change it.
+              Email is tied to your account and can't be edited here.
             </p>
           </div>
         </div>
