@@ -211,7 +211,11 @@ export function LeaderboardList({
                 </>
               );
               return (
-                <li key={it.key}>
+                <li
+                  key={it.key}
+                  onMouseEnter={onHighlight ? () => onHighlight(it.key) : undefined}
+                  onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+                >
                   {clickable ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -219,6 +223,8 @@ export function LeaderboardList({
                           type="button"
                           className={rowCls}
                           onClick={() => onSelect!(it.key)}
+                          onFocus={onHighlight ? () => onHighlight(it.key) : undefined}
+                          onBlur={onHighlight ? () => onHighlight(null) : undefined}
                           aria-label={clickHint ? clickHint(it) : defaultHint(it)}
                         >
                           {content}
