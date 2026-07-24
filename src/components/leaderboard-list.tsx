@@ -154,11 +154,12 @@ export function LeaderboardList({
             {filtered.map((it, i) => {
               const rank = query ? items.indexOf(it) + 1 : i + 1;
               const clickable = !!onSelect;
+              const isHighlighted = highlightedKey === it.key;
               const rowCls = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                 clickable
                   ? "hover:bg-[rgba(94,234,255,0.08)] hover:ring-1 hover:ring-[rgba(94,234,255,0.35)] cursor-pointer"
                   : "hover:bg-white/[0.04]"
-              } ${i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
+              } ${isHighlighted ? "bg-[rgba(94,234,255,0.12)] ring-1 ring-[rgba(94,234,255,0.5)]" : i % 2 === 0 ? "bg-white/[0.015]" : "bg-transparent"}`;
               const content = (
                 <>
                   <span className="mono w-8 text-xs font-semibold text-secondary">
