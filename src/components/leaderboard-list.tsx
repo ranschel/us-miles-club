@@ -87,6 +87,8 @@ export function LeaderboardList({
   searchable = false,
   searchPlaceholder = "Search",
   topN = 20,
+  highlightedKey,
+  onHighlight,
 }: {
   title: string;
   items: { key: string; label: string; sub?: string; miles: number; count: number; trend?: Trend }[];
@@ -97,6 +99,8 @@ export function LeaderboardList({
   searchable?: boolean;
   searchPlaceholder?: string;
   topN?: number;
+  highlightedKey?: string | null;
+  onHighlight?: (key: string | null) => void;
 }) {
   const [q, setQ] = useState("");
   const query = q.trim().toLowerCase();
