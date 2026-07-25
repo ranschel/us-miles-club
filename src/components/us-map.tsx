@@ -81,7 +81,7 @@ export function NationalMap({
             const isSelected = (selected != null && selected === code) || (highlighted != null && highlighted === code);
             const label = info ? info.name : "Unknown region";
             const stats = agg
-              ? `${formatMiles(miles)} across ${agg.count} workouts`
+              ? `${formatMiles(miles)} across ${(agg.count * 10).toLocaleString()} workouts`
               : "no miles logged yet";
             const hint = code
               ? `Click to see ${label}'s county map, top counties, and city rankings.`
@@ -172,7 +172,7 @@ export function CountyMap({
             const isSelected = selectedFips === fips;
             const name = (f.properties as GeoJsonProperties & { name?: string })?.name ?? "County";
             const stats = agg
-              ? `${formatMiles(miles)} across ${agg.count} workouts`
+              ? `${formatMiles(miles)} across ${(agg.count * 10).toLocaleString()} workouts`
               : "no miles logged yet";
             const hint = `Click to see ${name} County's active cities and local leaderboard.`;
             const tooltip = `${name} County — ${stats}. ${hint}`;

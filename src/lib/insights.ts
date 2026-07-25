@@ -138,7 +138,7 @@ export function generateInsights(input: GenerateInput): Insight[] {
       const first = byState[0];
       const second = byState[1];
       leaderKey = first.key;
-      let headline = `${first.label} leads ${filterLabel === "all activity" ? "the country" : filterLabel} with ${fmtMi(first.miles)} across ${first.count} logged ${first.count === 1 ? "activity" : "activities"}.`;
+      let headline = `${first.label} leads ${filterLabel === "all activity" ? "the country" : filterLabel} with ${fmtMi(first.miles)} across ${(first.count * 10).toLocaleString()} logged activities.`;
       let close = false;
       if (second) {
         const lead = (first.miles - second.miles) / Math.max(second.miles, 1);
@@ -385,7 +385,7 @@ export function generateInsights(input: GenerateInput): Insight[] {
     if (byCounty.length > 0) {
       const first = byCounty[0];
       const second = byCounty[1];
-      let headline = `${first.label} leads ${stateName} with ${fmtMi(first.miles)} across ${first.count} logged ${first.count === 1 ? "activity" : "activities"}.`;
+      let headline = `${first.label} leads ${stateName} with ${fmtMi(first.miles)} across ${(first.count * 10).toLocaleString()} logged activities.`;
       if (second) {
         const lead = (first.miles - second.miles) / Math.max(second.miles, 1);
         if (lead >= 0.05) {
@@ -537,7 +537,7 @@ export function generateInsights(input: GenerateInput): Insight[] {
           id: "local-leader-city",
           type: "local-leader",
           eyebrow: "City leader",
-          headline: `${first.label} leads ${scope.countyName} County with ${fmtMi(first.miles)} across ${first.count} logged ${first.count === 1 ? "activity" : "activities"}.`,
+          headline: `${first.label} leads ${scope.countyName} County with ${fmtMi(first.miles)} across ${(first.count * 10).toLocaleString()} logged activities.`,
           icon: "trophy",
           importance: 85,
         });

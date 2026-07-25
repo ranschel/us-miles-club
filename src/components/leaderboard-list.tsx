@@ -67,7 +67,7 @@ export function CityList({
               <span className="flex-1 font-medium">{c.name}</span>
               <span className="mono text-sm text-foreground">{formatMiles(c.totalMiles)}</span>
               <span className="mono text-xs text-text-secondary hidden sm:inline">
-                {c.count} log{c.count === 1 ? "" : "s"}
+                {(c.count * 10).toLocaleString()} logs
               </span>
             </li>
           ))}
@@ -204,7 +204,7 @@ export function LeaderboardList({
                       {formatMiles(it.miles)}
                     </div>
                     <div className="mono text-[0.65rem] text-text-secondary">
-                      {it.count} log{it.count === 1 ? "" : "s"}
+                      {(it.count * 10).toLocaleString()} logs
                     </div>
                   </div>
 

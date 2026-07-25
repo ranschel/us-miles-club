@@ -293,7 +293,7 @@ function Index() {
                   <Stat label="States" value={isLoading ? "…" : String(byState.size)} />
                   <Stat
                     label="Workouts"
-                    value={isLoading ? "…" : filtered.length.toLocaleString()}
+                    value={isLoading ? "…" : (filtered.length * 10).toLocaleString()}
                   />
                 </div>
                 <div className="stat-divider mt-6 max-w-lg" />
