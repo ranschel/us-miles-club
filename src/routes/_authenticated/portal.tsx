@@ -444,146 +444,145 @@ function Portal() {
       )}
 
       {/* ============= 2. OVERVIEW ============= */}
-      <section aria-label="Overview" className="mb-10">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Goal card — prominent, spans 2 cols on desktop, first on mobile */}
-          <div className="order-first sm:col-span-2 lg:col-span-2 lg:row-span-1">
-            <div className="card h-full border-primary/40 bg-[linear-gradient(135deg,rgba(249,115,22,0.10),rgba(249,115,22,0.02))] ring-1 ring-primary/25">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Target size={16} strokeWidth={2.5} />
-                    <span className="text-xs font-black uppercase tracking-wide">
-                      {monthLabel} goal
+      <section aria-label="Overview" className="mb-10 space-y-4">
+        {/* Goal card — full width, prominent */}
+        <div className="card border-primary/40 bg-[linear-gradient(135deg,rgba(249,115,22,0.10),rgba(249,115,22,0.02))] ring-1 ring-primary/25">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 text-primary">
+                <Target size={16} strokeWidth={2.5} />
+                <span className="text-xs font-black uppercase tracking-wide">
+                  {monthLabel} goal
+                </span>
+              </div>
+              {goal ? (
+                <>
+                  <div className="mono mt-2 text-4xl font-black tracking-tight">
+                    {formatMiles(monthMiles)}
+                    <span className="ml-2 text-lg font-bold text-text-secondary">
+                      of {formatMiles(goal)}
                     </span>
                   </div>
-                  {goal ? (
-                    <>
-                      <div className="mono mt-2 text-4xl font-black tracking-tight">
-                        {formatMiles(monthMiles)}
-                        <span className="ml-2 text-lg font-bold text-text-secondary">
-                          of {formatMiles(goal)}
-                        </span>
-                      </div>
-                      <div className="mono text-xs uppercase tracking-wide text-text-secondary">
-                        {goalPct.toFixed(0)}% {goalHit ? "· Goal hit 🎉" : "complete"}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="mono mt-2 text-3xl font-black">— </div>
-                      <div className="text-xs text-text-secondary">No goal set for this month</div>
-                    </>
-                  )}
-                </div>
-                {goal && !editingGoal && (
+                  <div className="mono text-xs uppercase tracking-wide text-text-secondary">
+                    {goalPct.toFixed(0)}% {goalHit ? "· Goal hit 🎉" : "complete"}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mono mt-2 text-3xl font-black">— </div>
+                  <div className="text-xs text-text-secondary">No goal set for this month</div>
+                </>
+              )}
+            </div>
+            {goal && !editingGoal && (
+              <button
+                type="button"
+                onClick={() => {
+                  setGoalDraft(goal.toString());
+                  setEditingGoal(true);
+                }}
+                className="btn btn-ghost"
+                aria-label="Edit goal"
+              >
+                <Pencil size={14} />
+              </button>
+            )}
+          </div>
+
+          {goal && (
+            <div className="mt-4">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{ width: `${goalPct}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {goal && !editingGoal && (
+            <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-border/60 pt-4">
+              <div>
+                <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
+                  To go
+                </dt>
+                <dd className="mono mt-1 text-lg font-bold">
+                  {goalHit ? "0 mi" : formatMiles(goalRemaining)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
+                  Days left
+                </dt>
+                <dd className="mono mt-1 text-lg font-bold">{daysRemaining}</dd>
+              </div>
+              <div>
+                <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
+                  Avg / day
+                </dt>
+                <dd className="mono mt-1 text-lg font-bold">
+                  {goalHit ? "—" : `${goalAvgPerDay.toFixed(1)} mi`}
+                </dd>
+              </div>
+            </dl>
+          )}
+
+          {(editingGoal || !goal) && (
+            <div className="mt-4 space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {[10, 25, 50, 100].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={`rounded-full border px-3 py-1 text-xs font-bold transition-colors ${
+                      goalDraft === n.toString()
+                        ? "border-primary bg-primary/20 text-primary"
+                        : "border-border text-text-secondary hover:border-primary/60 hover:text-foreground"
+                    }`}
+                    onClick={() => setGoalDraft(n.toString())}
+                  >
+                    {n} mi
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={10000}
+                  inputMode="numeric"
+                  className="field-input flex-1"
+                  placeholder="Custom miles"
+                  value={goalDraft}
+                  onChange={(e) => setGoalDraft(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={goalMut.isPending}
+                  onClick={submitGoalDraft}
+                >
+                  <Save size={14} /> Save
+                </button>
+                {editingGoal && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setGoalDraft(goal.toString());
-                      setEditingGoal(true);
-                    }}
                     className="btn btn-ghost"
-                    aria-label="Edit goal"
+                    onClick={() => {
+                      setGoalDraft(goal?.toString() ?? "");
+                      setEditingGoal(false);
+                    }}
                   >
-                    <Pencil size={14} />
+                    Cancel
                   </button>
                 )}
               </div>
-
-              {goal && (
-                <div className="mt-4">
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all"
-                      style={{ width: `${goalPct}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {goal && !editingGoal && (
-                <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-border/60 pt-4">
-                  <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
-                      To go
-                    </dt>
-                    <dd className="mono mt-1 text-lg font-bold">
-                      {goalHit ? "0 mi" : formatMiles(goalRemaining)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
-                      Days left
-                    </dt>
-                    <dd className="mono mt-1 text-lg font-bold">{daysRemaining}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wide text-text-secondary">
-                      Avg / day
-                    </dt>
-                    <dd className="mono mt-1 text-lg font-bold">
-                      {goalHit ? "—" : `${goalAvgPerDay.toFixed(1)} mi`}
-                    </dd>
-                  </div>
-                </dl>
-              )}
-
-              {(editingGoal || !goal) && (
-                <div className="mt-4 space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    {[10, 25, 50, 100].map((n) => (
-                      <button
-                        key={n}
-                        type="button"
-                        className={`rounded-full border px-3 py-1 text-xs font-bold transition-colors ${
-                          goalDraft === n.toString()
-                            ? "border-primary bg-primary/20 text-primary"
-                            : "border-border text-text-secondary hover:border-primary/60 hover:text-foreground"
-                        }`}
-                        onClick={() => setGoalDraft(n.toString())}
-                      >
-                        {n} mi
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      min={1}
-                      max={10000}
-                      inputMode="numeric"
-                      className="field-input flex-1"
-                      placeholder="Custom miles"
-                      value={goalDraft}
-                      onChange={(e) => setGoalDraft(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      disabled={goalMut.isPending}
-                      onClick={submitGoalDraft}
-                    >
-                      <Save size={14} /> Save
-                    </button>
-                    {editingGoal && (
-                      <button
-                        type="button"
-                        className="btn btn-ghost"
-                        onClick={() => {
-                          setGoalDraft(goal?.toString() ?? "");
-                          setEditingGoal(false);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
+          )}
+        </div>
 
+        {/* Three summary stats in a single row */}
+        <div className="grid gap-4 sm:grid-cols-3">
           <StatCard
             label="Total miles"
             value={formatMiles(total)}
@@ -620,22 +619,17 @@ function Portal() {
       </section>
 
       {/* ============= 3. PROGRESS & INSIGHTS ============= */}
-      <section aria-label="Progress" className="mb-10">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <WorkoutChart workouts={data} />
-          </div>
-          <div className="lg:col-span-1">
-            <PersonalInsights
-              insights={generatePersonalInsights({
-                workouts: data,
-                rankings,
-                monthlyGoal: goal,
-              })}
-            />
-          </div>
-        </div>
+      <section aria-label="Progress" className="mb-10 space-y-6">
+        <WorkoutChart workouts={data} />
+        <PersonalInsights
+          insights={generatePersonalInsights({
+            workouts: data,
+            rankings,
+            monthlyGoal: goal,
+          })}
+        />
       </section>
+
 
       {/* ============= 4. RANKINGS ============= */}
       <section aria-label="Rankings" className="mb-10">
