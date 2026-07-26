@@ -4,6 +4,8 @@
 
 A lightweight, map-driven mileage leaderboard for real US counties. Log a walk, run, or ride, and your city, county, and state climb a live map of the United States. No trackers, no social feed, no streak guilt.
 
+![US Miles Club dashboard screenshot](public/Screenshot.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
