@@ -84,28 +84,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "US Miles Club — live national mileage map" },
+      { title: "US Miles Club — Nationwide Mileage Dashboard" },
       {
         name: "description",
         content:
-          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+          "The Nationwide Mileage Dashboard — every walk, run, and ride lights up a live US map. Drill from state to county to city, no sign-in required.",
       },
       { name: "author", content: "US Miles Club" },
-      { property: "og:title", content: "US Miles Club — live national mileage map" },
+      { property: "og:title", content: "US Miles Club — Nationwide Mileage Dashboard" },
       {
         property: "og:description",
         content:
-          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+          "The Nationwide Mileage Dashboard — every walk, run, and ride lights up a live US map. Drill from state to county to city, no sign-in required.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@usmilesclub" },
-      { name: "twitter:title", content: "US Miles Club — live national mileage map" },
+      { name: "twitter:title", content: "US Miles Club — Nationwide Mileage Dashboard" },
       {
         name: "twitter:description",
         content:
-          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+          "The Nationwide Mileage Dashboard — every walk, run, and ride lights up a live US map. Drill from state to county to city, no sign-in required.",
       },
+
       { name: "theme-color", content: "#f97316" },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/xlxgLkJqqiUqxnJhcWL8tlMQSxp1/social-images/social-1783654732720-Gemini_Generated_Image_ipy3qnipy3qnipy3.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/xlxgLkJqqiUqxnJhcWL8tlMQSxp1/social-images/social-1783654732720-Gemini_Generated_Image_ipy3qnipy3qnipy3.webp" },

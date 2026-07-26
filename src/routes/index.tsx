@@ -32,18 +32,19 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "US Miles Club — live national mileage map" },
+      { title: "US Miles Club — Nationwide Mileage Dashboard" },
       {
         name: "description",
         content:
-          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+          "The Nationwide Mileage Dashboard — every walk, run, and ride lights up a live US map. Drill from state to county to city, no sign-in required.",
       },
-      { property: "og:title", content: "US Miles Club — live national mileage map" },
+      { property: "og:title", content: "US Miles Club — Nationwide Mileage Dashboard" },
       {
         property: "og:description",
         content:
-          "Watch every walk, run, and ride light up a live US map. Drill from state to county to city — no sign-in required.",
+          "The Nationwide Mileage Dashboard — every walk, run, and ride lights up a live US map. Drill from state to county to city, no sign-in required.",
       },
+
       { property: "og:url", content: "/" },
       { property: "og:image", content: logoAsset.url },
       { name: "twitter:image", content: logoAsset.url },
